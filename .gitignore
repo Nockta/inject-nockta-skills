@@ -5,3 +5,9 @@ dist/
 .DS_Store
 .nockta/
 coverage/
+
+# Install outputs (this tool renders these into consumer repos, and into
+# its own repo when dogfooded) — not package source.
+.agents/
+AGENTS.md
+CLAUDE.md

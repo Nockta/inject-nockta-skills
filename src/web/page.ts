@@ -83,6 +83,8 @@ export function renderWizardPage(schema: WizardSchema, token: string): string {
   .meta-chip.type { color: var(--accent-ink); background: var(--accent-tint); border-color: var(--accent-ring); font-family: var(--font-mono); }
 
   .wrap { max-width: 900px; margin: 0 auto; padding: 10px 22px 130px; }
+  /* In-flight submit: the form is locked (every control disabled) and visibly muted. */
+  .wrap.busy { opacity: 0.55; pointer-events: none; }
 
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-card); overflow: hidden; margin-top: 18px; }
   .card > .card-head { padding: 15px 20px; background: var(--surface-2); border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
@@ -486,15 +488,40 @@ export function renderWizardPage(schema: WizardSchema, token: string): string {
     app.appendChild(d);
   }
 
+  // ---- in-flight form lock ----
+  // An install (or a repair/upgrade-scale one) is not instant. While it runs, the form must be
+  // truthfully non-interactable: every control disabled + the form visibly muted (.busy). Controls
+  // that were ALREADY disabled (locked/required skill rows) are left alone on unlock — only the
+  // ones this lock disabled (marked data-submit-locked) are re-enabled.
+  var submitting = false;
+  function setFormLocked(locked) {
+    document.querySelectorAll("input, button").forEach(function (c) {
+      if (locked) {
+        if (!c.disabled) { c.disabled = true; c.setAttribute("data-submit-locked", "1"); }
+      } else if (c.getAttribute("data-submit-locked") === "1") {
+        c.disabled = false;
+        c.removeAttribute("data-submit-locked");
+      }
+    });
+    var app = document.getElementById("app");
+    if (app) app.className = locked ? "wrap busy" : "wrap";
+  }
+
   function submit(btn, errNode) {
-    btn.disabled = true; errNode.textContent = "";
+    if (submitting) return; // one in-flight submit only (server 409s a second anyway — this keeps the client honest too)
+    // Collect BEFORE locking — disabled controls still carry state, but keep the read/lock order obvious.
+    var answers = collectAnswers();
+    submitting = true;
+    setFormLocked(true);
+    errNode.textContent = "Working… installing skills (this can take a moment).";
+    var unlock = function () { submitting = false; setFormLocked(false); updateConfirmGate(); };
     fetch("/submit?t=" + encodeURIComponent(TOKEN), {
       method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ token: TOKEN, answers: collectAnswers() })
+      body: JSON.stringify({ token: TOKEN, answers: answers })
     }).then(function (r) { return r.json(); }).then(function (j) {
       if (j && j.ok) showDone();
-      else { errNode.textContent = "Install failed: " + ((j && j.error) || "unknown error"); btn.disabled = false; updateConfirmGate(); }
-    }).catch(function (e) { errNode.textContent = "Network error: " + e; btn.disabled = false; updateConfirmGate(); });
+      else { errNode.textContent = "Install failed: " + ((j && j.error) || "unknown error"); unlock(); }
+    }).catch(function (e) { errNode.textContent = "Network error: " + e; unlock(); });
   }
 
   // ---- Confirm gating (mirrors the TTY wizard's cancel rules: zero repo types / zero targets is

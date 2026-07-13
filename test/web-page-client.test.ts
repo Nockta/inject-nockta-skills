@@ -45,6 +45,7 @@ interface StubNode {
   appendChild(child: StubNode): StubNode;
   setAttribute(name: string, value: string): void;
   getAttribute(name: string): string | null;
+  removeAttribute(name: string): void;
   addEventListener(event: string, fn: () => void): void;
   remove(): void;
   querySelectorAll(selector: string): StubNode[];
@@ -76,6 +77,9 @@ function makeNode(tagName?: string): StubNode {
     getAttribute(name) {
       return name in node.attributes ? node.attributes[name]! : null;
     },
+    removeAttribute(name) {
+      delete node.attributes[name];
+    },
     addEventListener(event, fn) {
       (node.listeners[event] ??= []).push(fn);
     },
@@ -104,8 +108,11 @@ function walk(root: StubNode, visit: (n: StubNode) => void): void {
   for (const child of root.children) walk(child, visit);
 }
 
-/** Supports the two selector shapes the script uses: `input[data-stepid="X"]` and `.cls1.cls2`. */
+/** Supports the selector shapes the script uses: `input[data-stepid="X"]`, `.cls1.cls2`, bare tags (`input`), and comma lists (`input, button` — the form-lock selector). */
 function queryAll(root: StubNode, selector: string): StubNode[] {
+  if (selector.includes(",")) {
+    return selector.split(",").flatMap((part) => queryAll(root, part.trim()));
+  }
   const out: StubNode[] = [];
   const attrMatch = /^input\[data-stepid="([^"]+)"\]$/.exec(selector);
   if (attrMatch) {
@@ -119,6 +126,12 @@ function queryAll(root: StubNode, selector: string): StubNode[] {
     walk(root, (n) => {
       const own = (n.className || "").split(/\s+/);
       if (classes.every((c) => own.includes(c))) out.push(n);
+    });
+    return out;
+  }
+  if (/^[a-z]+$/.test(selector)) {
+    walk(root, (n) => {
+      if (n.tagName === selector) out.push(n);
     });
     return out;
   }
@@ -371,5 +384,54 @@ describe("web page client JS — Confirm gating + submit truthfulness", () => {
     page.clickConfirm();
     await tick();
     expect(page.masthead().style["display"]).toBe("none");
+  });
+});
+
+describe("web page client JS — in-flight form lock (owner-reported gap: form stayed interactable during a running install)", () => {
+  it("clicking Confirm locks EVERY control immediately; already-disabled (locked) rows are left alone on unlock", async () => {
+    const { schema } = buildWebSchema({ type: "next", adapters: ALL_ADAPTERS, packsRoot });
+    const page = runPage(schema);
+
+    // grilling is locked-on (dependency lock) BEFORE submit — it must stay disabled through
+    // lock AND unlock, untouched by the submit lock's bookkeeping.
+    const locked = page.input("skills", "grilling")!;
+    expect(locked.disabled).toBe(true);
+    const free = page.input("skills", "grill-me")!;
+    expect(free.disabled).toBe(false);
+
+    // Fail the submit so the unlock path runs.
+    page.queueResponse({ ok: false, error: "boom" });
+    page.clickConfirm();
+
+    // Synchronously after the click (response not yet consumed): the form is locked.
+    expect(free.disabled).toBe(true);
+    expect(free.getAttribute("data-submit-locked")).toBe("1");
+    expect(page.confirmButton().disabled).toBe(true);
+    expect(locked.disabled).toBe(true);
+    expect(locked.getAttribute("data-submit-locked")).toBeNull(); // never marked — was already disabled
+    expect(page.err().textContent).toMatch(/Working…/);
+
+    // Failure response lands: the form unlocks for a corrected resubmit…
+    await tick();
+    expect(free.disabled).toBe(false);
+    expect(free.getAttribute("data-submit-locked")).toBeNull();
+    expect(page.confirmButton().disabled).toBe(false);
+    // …but the dependency-locked row is still disabled (the lock never owned it).
+    expect(locked.disabled).toBe(true);
+    expect(page.err().textContent).toMatch(/Install failed: boom/);
+  });
+
+  it("a second Confirm click while a submit is in flight produces NO second POST", async () => {
+    const { schema } = buildWebSchema({ type: "next", adapters: ALL_ADAPTERS, packsRoot });
+    const page = runPage(schema);
+
+    page.queueResponse({ ok: true });
+    page.clickConfirm();
+    page.clickConfirm(); // in-flight double click (stub dispatches regardless of disabled — pins the submitting guard too)
+    await tick();
+
+    const submits = page.fetchCalls.filter((c) => c.url.includes("/submit"));
+    expect(submits).toHaveLength(1);
+    expect(page.masthead().style["display"]).toBe("none"); // the one real submit completed
   });
 });

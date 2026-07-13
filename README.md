@@ -675,8 +675,7 @@ original content was used only as a topic checklist, with no prose, code, tables
 reused (decisions.md D26/D27).
 
 **License.** This package is Apache-2.0-licensed (see `package.json` `"license"` field, the root
-`LICENSE` file, and the root `NOTICE` file). It remains `"private": true` in `package.json` pending
-the owner's decision to publish — the license declaration is independent of that gate.
+`LICENSE` file, and the root `NOTICE` file).
 
 The bundled `razor` pack (`packs/razor/`) is a separate case: it is Razor's personally authored
 engineering-doctrine skill layer and is licensed **MIT**, not Apache-2.0 — see `packs/razor/LICENSE`.

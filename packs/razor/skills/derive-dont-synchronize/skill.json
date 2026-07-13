@@ -1,0 +1,42 @@
+{
+  "name": "derive-dont-synchronize",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Compute values from existing React state and props whenever possible instead of storing synchronized copies.",
+  "clashesWith": [
+    "react-best-practices"
+  ],
+  "applicability": [
+    "next",
+    "vite-react-ts",
+    "shopify-theme",
+    "shopify-headless",
+    "react-native",
+    "expo"
+  ],
+  "category": "react"
+}

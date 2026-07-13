@@ -1,0 +1,41 @@
+{
+  "name": "right-size-the-system",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Choose architecture, data access, concurrency, and infrastructure for the known load and credible growth path rather than imaginary hyperscale or demo-scale assumptions.",
+  "applicability": [
+    "next",
+    "vite-react-ts",
+    "nest",
+    "shopify-app",
+    "shopify-theme",
+    "shopify-headless",
+    "react-native",
+    "expo"
+  ],
+  "category": "architecture"
+}

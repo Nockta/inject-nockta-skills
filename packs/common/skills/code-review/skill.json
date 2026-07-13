@@ -1,0 +1,30 @@
+{
+  "name": "code-review",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "default",
+  "description": "Review the changes since a fixed point (commit, branch, tag, or merge-base) along two axes — Standards (does the code follow this repo's documented coding standards?) and Spec (does the code match what the originating issue/PRD asked for?). Runs both reviews in parallel sub-agents and reports them side by side. Use when the user wants to review a branch, a PR, work-in-progress changes, or asks to \"review since X\"."
+}

@@ -1,0 +1,30 @@
+{
+  "name": "callstack-react-native-best-practices",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "default",
+  "description": "Provides React Native performance optimization guidelines for FPS, TTI, bundle size, memory leaks, re-renders, and animations. Applies to tasks involving Hermes optimization, JS thread blocking, bridge overhead, FlashList, native modules, or debugging jank and frame drops."
+}

@@ -1,0 +1,24 @@
+{
+  "name": "next",
+  "displayName": "Next.js",
+  "description": "Nockta AI skills for Next.js App Router projects.",
+  "requires": [
+    "common"
+  ],
+  "skills": [
+    "react-best-practices",
+    "nextjs-app-router-patterns",
+    "composition-patterns",
+    "react-view-transitions",
+    "next-dev-loop",
+    "next-cache-components-adoption",
+    "next-cache-components-optimizer"
+  ],
+  "adapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ]
+}

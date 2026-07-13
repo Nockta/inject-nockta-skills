@@ -1,0 +1,27 @@
+{
+  "name": "monorepo",
+  "displayName": "Monorepo",
+  "description": "Nockta AI skills for monorepos with multiple Nockta-managed targets.",
+  "requires": [
+    "common"
+  ],
+  "skills": [
+    "turborepo",
+    "link-workspace-packages",
+    "monorepo-management",
+    "turborepo-caching",
+    "nx-workspace-patterns",
+    "nx-workspace",
+    "nx-generate",
+    "nx-import",
+    "nx-plugins",
+    "nx-run-tasks"
+  ],
+  "adapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ]
+}

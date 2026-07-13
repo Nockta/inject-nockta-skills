@@ -1,0 +1,30 @@
+{
+  "name": "webapp-testing",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "default",
+  "description": "Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs."
+}

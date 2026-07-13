@@ -1,0 +1,30 @@
+{
+  "name": "proof-of-done",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "required",
+  "description": "Done means demonstrated. Invoke before declaring any change complete, before committing or shipping, and whenever a subagent reports success — a fix or feature counts as done only when observed working in the running system, with evidence. Covers: no self-certification (the maker is never the sole verifier), independent verification of delegated work, human eyes required for visual/audio/feel surfaces, evidence attached to every 'fixed' claim, skipped verification flagged loudly rather than assumed, and routing tiny subjective tweaks to a human instead of agent iteration loops."
+}

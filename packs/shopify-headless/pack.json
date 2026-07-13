@@ -1,0 +1,24 @@
+{
+  "name": "shopify-headless",
+  "displayName": "Shopify Headless",
+  "description": "Nockta AI skills for Hydrogen, Remix, and custom Shopify storefronts using the Storefront API.",
+  "telemetryNote": "Some skills in this pack bundle Shopify's own official, opt-out usage instrumentation (prompts + usage data -> https://shopify.dev/mcp/usage). Not modified by Nockta. Opt out: OPT_OUT_INSTRUMENTATION=true. See README 'Telemetry in bundled Shopify skills'.",
+  "requires": [
+    "common"
+  ],
+  "skills": [
+    "shopify-storefront-graphql",
+    "shopify-hydrogen",
+    "weaverse-hydrogen-cookbooks",
+    "weaverse-hydrogen-upgrades",
+    "weaverse-shopify-hydrogen",
+    "weaverse-theme-update"
+  ],
+  "adapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ]
+}

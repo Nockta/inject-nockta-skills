@@ -1,0 +1,36 @@
+{
+  "name": "presence-is-ephemeral",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Treat online status, socket membership, heartbeats, and active sessions as ephemeral operational signals rather than durable business truth.",
+  "applicability": [
+    "nest",
+    "shopify-app",
+    "shopify-headless"
+  ],
+  "category": "realtime"
+}

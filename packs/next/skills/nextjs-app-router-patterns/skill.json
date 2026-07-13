@@ -1,0 +1,36 @@
+{
+  "name": "nextjs-app-router-patterns",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "default",
+  "description": "Master Next.js 14+ App Router with Server Components, streaming, parallel routes, and advanced data fetching. Use when building Next.js applications, implementing SSR/SSG, or optimizing React Server Components.",
+  "clashesWith": [
+    "razor:caching-is-never-accidental",
+    "razor:draw-the-client-boundary",
+    "razor:server-by-default",
+    "razor:url-state-is-public-state"
+  ]
+}

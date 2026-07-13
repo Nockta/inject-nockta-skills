@@ -1,0 +1,39 @@
+{
+  "name": "normalize-metafields-at-the-edge",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Translate Shopify metafield namespaces, keys, types, references, and GraphQL shapes into stable application models before UI or business logic consumes them.",
+  "clashesWith": [
+    "shopify-custom-data"
+  ],
+  "applicability": [
+    "shopify-app",
+    "shopify-theme",
+    "shopify-headless"
+  ],
+  "category": "shopify"
+}

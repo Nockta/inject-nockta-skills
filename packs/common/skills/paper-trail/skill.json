@@ -1,0 +1,30 @@
+{
+  "name": "paper-trail",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "required",
+  "description": "Where finished knowledge lives and what to consult before deciding. Invoke when substantial work concludes (feature built, bug root-caused, research finished, architecture decided) to file its documentation; before designing or briefing architecture (consult decision records first); when creating a module (seed its docs); or when the user says 'document this', 'update the docs', or asks where something is documented. Encodes: one canonical home per piece of knowledge; a root context.md as index-with-takeaways updated in the same pass; module-level CONTEXT.md/USAGE.md as the primary sources (in-module, docs/<module>/ mirror, or central docs/ — a declared layout profile); decision records consulted before new architecture."
+}

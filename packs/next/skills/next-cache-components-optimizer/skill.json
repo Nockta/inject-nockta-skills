@@ -1,0 +1,33 @@
+{
+  "name": "next-cache-components-optimizer",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Optimize a Next.js app that has `cacheComponents: true` — either the static shell on first paint, or the in-app navigation between routes. Picks the matching diagnostic loop and runs it.",
+  "clashesWith": [
+    "razor:caching-is-never-accidental"
+  ]
+}

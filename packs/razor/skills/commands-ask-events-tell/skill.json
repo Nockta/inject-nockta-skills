@@ -1,0 +1,36 @@
+{
+  "name": "commands-ask-events-tell",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Separate commands that request intent from events that report completed facts.",
+  "applicability": [
+    "nest",
+    "shopify-app",
+    "shopify-headless"
+  ],
+  "category": "realtime"
+}

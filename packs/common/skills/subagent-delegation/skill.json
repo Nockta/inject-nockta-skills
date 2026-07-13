@@ -1,0 +1,34 @@
+{
+  "name": "subagent-delegation",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true,
+      "agents": true
+    },
+    "cursor": {
+      "skills": true,
+      "agents": false
+    },
+    "copilot": {
+      "skills": true,
+      "agents": false
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true,
+      "agents": false
+    }
+  },
+  "enablement": "required",
+  "description": "Invoke at the start of any task that requires real work — before writing or generating code, scripts, or assets; before fetching, researching, or verifying data, docs, licences, or web sources; before reading or cross-checking multiple files; before a build spike, debugging pass, or multi-step investigation. When this skill is active, such work is delegated to subagents, not done inline: the main thread stays a clean desk for planning and talking to the user, while subagents do the reading, fetching, coding, and verifying and report back tersely (via the caveman skill). The skill covers how to rank each job by complexity and criticality, pick the weakest capable subagent and model, brief it, run independent jobs in parallel, and keep delegation one level deep. Trigger even when the user just says \"write the parser,\" \"fetch the layers,\" \"check the licence,\" or \"find where these docs contradict\" and never mentions subagents — delegation is the default. Skip only for answering from knowledge you already hold — the moment a tool would touch a file, a shell, or the web, it's a worker's job, however small."
+}

@@ -1,0 +1,39 @@
+{
+  "name": "react-owns-the-interaction",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Use React for complex stateful interaction inside Shopify themes while keeping its boundary explicit and compatible with Liquid.",
+  "clashesWith": [
+    "liquid-theme-standards"
+  ],
+  "applicability": [
+    "shopify-app",
+    "shopify-theme",
+    "shopify-headless"
+  ],
+  "category": "shopify"
+}

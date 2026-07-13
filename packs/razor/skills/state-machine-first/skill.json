@@ -1,0 +1,36 @@
+{
+  "name": "state-machine-first",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Define valid states, transitions, actors, preconditions, and terminal semantics before implementing realtime status commands or UI controls.",
+  "applicability": [
+    "nest",
+    "shopify-app",
+    "shopify-headless"
+  ],
+  "category": "realtime"
+}

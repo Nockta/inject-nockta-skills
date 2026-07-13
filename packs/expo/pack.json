@@ -1,0 +1,36 @@
+{
+  "name": "expo",
+  "displayName": "Expo",
+  "description": "Nockta AI skills for Expo-managed React Native projects (expo-router, native UI, modules, and DX tooling).",
+  "requires": [
+    "react-native"
+  ],
+  "skills": [
+    "expo-router",
+    "expo-ui",
+    "expo-native-ui",
+    "expo-data-fetching",
+    "expo-tailwind-setup",
+    "expo-module",
+    "expo-dom",
+    "expo-dev-client",
+    "expo-examples",
+    "expo-app-clip",
+    "expo-brownfield",
+    "expo-upgrade",
+    "expo-web-to-native",
+    "eas-app-stores",
+    "eas-hosting",
+    "eas-observe",
+    "eas-simulator",
+    "eas-update-insights",
+    "eas-workflows"
+  ],
+  "adapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ]
+}

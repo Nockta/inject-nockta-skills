@@ -1,0 +1,62 @@
+{
+  "name": "inject-nockta-skills",
+  "version": "0.1.0",
+  "description": "Injects Nockta AI agent skill packs (Claude, Cursor, Copilot adapters) into existing repos.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "bin": {
+    "inject-nockta-skills": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "packs",
+    "README.md",
+    "NOTICE",
+    "THIRD-PARTY-LICENSES.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.18.3",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "pnpm build && pnpm typecheck && pnpm test",
+    "start": "node dist/cli.js",
+    "import-skill": "tsx scripts/import-skill.ts",
+    "import-common-skills": "tsx scripts/import-skill.ts --curate common",
+    "import-razor-skills": "tsx scripts/import-skill.ts --curate razor"
+  },
+  "dependencies": {
+    "@inquirer/core": "^11.2.1",
+    "@inquirer/prompts": "^8.5.2",
+    "commander": "^15.0.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}

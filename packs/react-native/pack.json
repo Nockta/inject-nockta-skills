@@ -1,0 +1,31 @@
+{
+  "name": "react-native",
+  "displayName": "React Native",
+  "description": "Nockta AI skills for bare React Native projects (New Architecture, performance, and native-module workflows).",
+  "requires": [
+    "common"
+  ],
+  "skills": [
+    "swm-react-native-best-practices",
+    "react-native-skills",
+    "callstack-react-native-best-practices",
+    "callstack-assess-react-native-migration",
+    "callstack-create-react-native-library",
+    "callstack-react-native-brownfield-migration",
+    "callstack-react-native-tv-best-practices",
+    "callstack-upgrading-react-native",
+    "callstack-github-actions",
+    "callstack-react-navigation",
+    "swm-radon-mcp",
+    "swm-rnrepo",
+    "wshobson-react-native-architecture",
+    "wshobson-react-native-design"
+  ],
+  "adapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ]
+}

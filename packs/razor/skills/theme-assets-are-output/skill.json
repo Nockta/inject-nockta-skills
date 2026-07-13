@@ -1,0 +1,39 @@
+{
+  "name": "theme-assets-are-output",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Treat bundled JavaScript, CSS, and generated Shopify theme assets as outputs of a reproducible build rather than hand-maintained source.",
+  "clashesWith": [
+    "liquid-theme-standards"
+  ],
+  "applicability": [
+    "shopify-app",
+    "shopify-theme",
+    "shopify-headless"
+  ],
+  "category": "shopify"
+}

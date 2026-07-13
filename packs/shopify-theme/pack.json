@@ -1,0 +1,21 @@
+{
+  "name": "shopify-theme",
+  "displayName": "Shopify Theme",
+  "description": "Nockta AI skills for Shopify Liquid/theme projects.",
+  "telemetryNote": "shopify-liquid bundles Shopify's own official, opt-out usage instrumentation (prompts + usage data -> https://shopify.dev/mcp/usage). Not modified by Nockta. Opt out: OPT_OUT_INSTRUMENTATION=true. See README 'Telemetry in bundled Shopify skills'.",
+  "requires": [
+    "common"
+  ],
+  "skills": [
+    "shopify-liquid",
+    "liquid-a11y",
+    "liquid-theme-standards"
+  ],
+  "adapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ]
+}

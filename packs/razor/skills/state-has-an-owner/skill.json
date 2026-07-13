@@ -1,0 +1,45 @@
+{
+  "name": "state-has-an-owner",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Assign every React state value one clear owner and avoid mirroring it across props, local state, stores, query cache, URL state, and the DOM.",
+  "clashesWith": [
+    "react-best-practices",
+    "react-native-skills",
+    "swm-react-native-best-practices",
+    "wshobson-react-native-design"
+  ],
+  "applicability": [
+    "next",
+    "vite-react-ts",
+    "shopify-theme",
+    "shopify-headless",
+    "react-native",
+    "expo"
+  ],
+  "category": "react"
+}

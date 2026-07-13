@@ -1,0 +1,39 @@
+{
+  "name": "ownership-lives-in-the-schema",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Model database relations so authority, tenancy, lifecycle, and domain meaning are explicit rather than inferred from loose identifiers.",
+  "clashesWith": [
+    "nestjs-best-practices"
+  ],
+  "applicability": [
+    "nest",
+    "shopify-app",
+    "shopify-headless"
+  ],
+  "category": "data"
+}

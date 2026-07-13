@@ -1,0 +1,35 @@
+{
+  "name": "liquid-theme-standards",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "default",
+  "description": "Front-end craft standards for Shopify Liquid themes — the CSS architecture, semantic HTML, and vanilla-JS/custom-element patterns that keep a theme fast, maintainable, and merchant-safe. Use whenever authoring or reviewing the CSS/JS/HTML inside .liquid sections, snippets, and blocks or the theme's assets/ files: class naming and BEM structure, design tokens and CSS custom properties, cascade layers and a specificity budget, defensive/responsive CSS, container queries, Web Components / custom elements for interactive sections, progressive enhancement, and CLS/LCP-aware performance. Trigger this even when the user just says 'style this section', 'name these classes', 'set up theme tokens', 'write a custom element for my slider', 'why is my theme layout shifting', 'organize my theme's CSS', or asks where CSS/JS should live in a Liquid theme — not only when they name BEM, tokens, or Web Components explicitly. For accessibility specifically (ARIA, focus, contrast) use liquid-a11y; for Liquid language/objects/schema use shopify-liquid.",
+  "clashesWith": [
+    "razor:liquid-owns-the-shell",
+    "razor:react-owns-the-interaction",
+    "razor:theme-assets-are-output"
+  ]
+}

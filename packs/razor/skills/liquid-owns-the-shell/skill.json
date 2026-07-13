@@ -1,0 +1,40 @@
+{
+  "name": "liquid-owns-the-shell",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Let Shopify Liquid own merchant-configurable theme composition, initial storefront structure, and server-rendered content.",
+  "clashesWith": [
+    "liquid-theme-standards",
+    "shopify-liquid"
+  ],
+  "applicability": [
+    "shopify-app",
+    "shopify-theme",
+    "shopify-headless"
+  ],
+  "category": "shopify"
+}

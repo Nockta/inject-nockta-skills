@@ -1,0 +1,44 @@
+{
+  "name": "scope-every-mutation",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Enforce tenant, vendor, branch, business-unit, user, or resource ownership at every state-changing boundary.",
+  "clashesWith": [
+    "shopify-admin"
+  ],
+  "applicability": [
+    "next",
+    "vite-react-ts",
+    "nest",
+    "shopify-app",
+    "shopify-theme",
+    "shopify-headless",
+    "react-native",
+    "expo"
+  ],
+  "category": "security"
+}

@@ -1,0 +1,33 @@
+{
+  "name": "common",
+  "displayName": "Common",
+  "description": "Core Nockta AI workflow skills used across every project type.",
+  "requires": [],
+  "skills": [
+    "paper-trail",
+    "proof-of-done",
+    "subagent-delegation",
+    "grill-me",
+    "brainstorming",
+    "diagnosing-bugs",
+    "webapp-testing",
+    "tdd",
+    "code-review",
+    "receiving-code-review",
+    "requesting-code-review",
+    "writing-plans",
+    "using-git-worktrees",
+    "finishing-a-development-branch",
+    "codebase-design",
+    "grilling",
+    "domain-modeling",
+    "improve-codebase-architecture"
+  ],
+  "adapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ]
+}

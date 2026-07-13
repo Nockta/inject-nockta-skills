@@ -1,0 +1,19 @@
+{
+  "name": "nest",
+  "displayName": "NestJS",
+  "description": "Nockta AI skills for NestJS projects.",
+  "requires": [
+    "common"
+  ],
+  "skills": [
+    "nestjs-best-practices",
+    "nestjs-expert"
+  ],
+  "adapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ]
+}

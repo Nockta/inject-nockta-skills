@@ -1,0 +1,45 @@
+{
+  "name": "one-source-one-artifact",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Produce deployable artifacts from canonical source in a controlled build rather than rebuilding differently across environments.",
+  "clashesWith": [
+    "eas-app-stores",
+    "turborepo"
+  ],
+  "applicability": [
+    "next",
+    "vite-react-ts",
+    "nest",
+    "shopify-app",
+    "shopify-theme",
+    "shopify-headless",
+    "react-native",
+    "expo"
+  ],
+  "category": "delivery"
+}

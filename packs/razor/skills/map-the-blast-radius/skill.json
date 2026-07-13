@@ -1,0 +1,41 @@
+{
+  "name": "map-the-blast-radius",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Analyze the full impact of a proposed change before implementation. Use when a change may affect multiple layers, consumers, integrations, contracts, generated outputs, deployment behavior, data shape, security boundaries, or operational workflows.",
+  "applicability": [
+    "next",
+    "vite-react-ts",
+    "nest",
+    "shopify-app",
+    "shopify-theme",
+    "shopify-headless",
+    "react-native",
+    "expo"
+  ],
+  "category": "core"
+}

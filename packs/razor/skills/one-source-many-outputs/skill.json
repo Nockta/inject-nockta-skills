@@ -1,0 +1,41 @@
+{
+  "name": "one-source-many-outputs",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Keep one canonical representation and derive adapters, projections, generated files, indexes, or platform-specific outputs from it.",
+  "applicability": [
+    "next",
+    "vite-react-ts",
+    "nest",
+    "shopify-app",
+    "shopify-theme",
+    "shopify-headless",
+    "react-native",
+    "expo"
+  ],
+  "category": "architecture"
+}

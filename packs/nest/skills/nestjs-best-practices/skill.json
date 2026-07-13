@@ -1,0 +1,41 @@
+{
+  "name": "nestjs-best-practices",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "default",
+  "description": "NestJS best practices and architecture patterns for building production-ready applications. This skill should be used when writing, reviewing, or refactoring NestJS code to ensure proper patterns for modules, dependency injection, security, and performance.",
+  "clashesWith": [
+    "razor:authenticate-once-authorize-again",
+    "razor:fail-before-listen",
+    "razor:fetch-only-what-you-need",
+    "razor:modules-follow-authority",
+    "razor:ownership-lives-in-the-schema",
+    "razor:providers-stay-behind-adapters",
+    "razor:the-database-enforces-truth",
+    "razor:transactions-protect-invariants",
+    "razor:use-cases-before-crud"
+  ]
+}

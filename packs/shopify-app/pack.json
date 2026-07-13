@@ -1,0 +1,31 @@
+{
+  "name": "shopify-app",
+  "displayName": "Shopify App",
+  "description": "Nockta AI skills for Shopify apps using Admin APIs, webhooks, extensions, app bridge, and billing.",
+  "telemetryNote": "Several skills in this pack bundle Shopify's own official, opt-out usage instrumentation (prompts + usage data -> https://shopify.dev/mcp/usage). Not modified by Nockta. Opt out: OPT_OUT_INSTRUMENTATION=true. See README 'Telemetry in bundled Shopify skills'.",
+  "requires": [
+    "common"
+  ],
+  "skills": [
+    "shopify-admin",
+    "shopify-use-shopify-cli",
+    "shopify-custom-data",
+    "shopify-webhooks",
+    "shopify-polaris-app-home",
+    "shopify-functions",
+    "shopify-partner",
+    "shopify-payments-apps",
+    "shopify-customer",
+    "shopify-app-store-review",
+    "shopify-polaris-admin-extensions",
+    "shopify-polaris-checkout-extensions",
+    "shopify-polaris-customer-account-extensions"
+  ],
+  "adapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ]
+}

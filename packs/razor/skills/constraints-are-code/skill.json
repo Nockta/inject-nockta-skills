@@ -1,0 +1,45 @@
+{
+  "name": "constraints-are-code",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Convert requirements, design decisions, repository rules, and user corrections into an explicit constraint ledger, implementation decisions, and verifiable acceptance criteria. Use when a task contains exact limits, layout rules, ownership rules, security requirements, PR limits, units, exceptions, or multiple interacting decisions.",
+  "clashesWith": [
+    "brainstorming",
+    "grill-me"
+  ],
+  "applicability": [
+    "next",
+    "vite-react-ts",
+    "nest",
+    "shopify-app",
+    "shopify-theme",
+    "shopify-headless",
+    "react-native",
+    "expo"
+  ],
+  "category": "core"
+}

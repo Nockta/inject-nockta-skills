@@ -1,0 +1,28 @@
+{
+  "name": "improve-codebase-architecture",
+  "supportedAdapters": [
+    "claude",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": false,
+    "copilot": false,
+    "agent": false,
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick.",
+  "clashesWith": [
+    "razor:boundaries-follow-authority"
+  ],
+  "requires": [
+    "codebase-design",
+    "grilling",
+    "domain-modeling"
+  ]
+}

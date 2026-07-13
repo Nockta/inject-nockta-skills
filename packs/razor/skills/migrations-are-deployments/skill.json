@@ -1,0 +1,39 @@
+{
+  "name": "migrations-are-deployments",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Treat database migrations as staged production changes with compatibility, ordering, backfill, observability, and rollback implications.",
+  "clashesWith": [
+    "nestjs-expert"
+  ],
+  "applicability": [
+    "nest",
+    "shopify-app",
+    "shopify-headless"
+  ],
+  "category": "data"
+}

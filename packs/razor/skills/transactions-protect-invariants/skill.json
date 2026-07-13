@@ -1,0 +1,39 @@
+{
+  "name": "transactions-protect-invariants",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Place transaction boundaries around business invariants and atomic state changes rather than arbitrary batches of ORM calls.",
+  "clashesWith": [
+    "nestjs-best-practices"
+  ],
+  "applicability": [
+    "nest",
+    "shopify-app",
+    "shopify-headless"
+  ],
+  "category": "data"
+}

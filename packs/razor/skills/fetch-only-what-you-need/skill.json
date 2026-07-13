@@ -1,0 +1,40 @@
+{
+  "name": "fetch-only-what-you-need",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Shape Prisma and database queries around the actual response or use case instead of loading broad object graphs by default.",
+  "clashesWith": [
+    "nestjs-best-practices",
+    "shopify-storefront-graphql"
+  ],
+  "applicability": [
+    "nest",
+    "shopify-app",
+    "shopify-headless"
+  ],
+  "category": "data"
+}

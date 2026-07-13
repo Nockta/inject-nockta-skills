@@ -1,0 +1,21 @@
+{
+  "name": "vite-react-ts",
+  "displayName": "Vite + React + TypeScript",
+  "description": "Nockta AI skills for Vite + React + TypeScript projects.",
+  "requires": [
+    "common"
+  ],
+  "skills": [
+    "react-best-practices",
+    "composition-patterns",
+    "vite",
+    "react-view-transitions"
+  ],
+  "adapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ]
+}

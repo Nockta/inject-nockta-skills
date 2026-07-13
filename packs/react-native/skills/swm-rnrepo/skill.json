@@ -1,0 +1,30 @@
+{
+  "name": "swm-rnrepo",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Best practices for integrating and using RNRepo — Software Mansion's infrastructure for pre-built React Native library artifacts that reduces native build times by up to 2×. Use when setting up, configuring, or troubleshooting RNRepo in a React Native or Expo project. Trigger on: 'RNRepo', 'rnrepo', 'slow builds', 'build times', 'prebuilt artifacts', 'prebuilt libraries', '@rnrepo/expo-config-plugin', '@rnrepo/build-tools', 'prebuilds-plugin', 'rnrepo.config.json', 'DISABLE_RNREPO', 'packages.rnrepo.org', 'Maven prebuild', 'CocoaPods prebuild', 'xcframework prebuild', 'prebuild AAR', 'build from source', 'native compilation slow', 'Gradle plugin slow', 'pod install slow', 'CI build times'."
+}

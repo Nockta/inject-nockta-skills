@@ -1,0 +1,37 @@
+{
+  "name": "providers-stay-behind-adapters",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Place payment, delivery, ERP, Shopify, search, storage, email, and other provider behavior behind explicit adapter contracts.",
+  "clashesWith": [
+    "nestjs-best-practices"
+  ],
+  "applicability": [
+    "nest"
+  ],
+  "category": "nestjs"
+}

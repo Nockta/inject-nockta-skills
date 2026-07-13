@@ -1,0 +1,39 @@
+{
+  "name": "merchant-state-is-sacred",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Protect merchant-managed templates, JSON configuration, section settings, and live theme state during development and deployment.",
+  "clashesWith": [
+    "shopify-liquid"
+  ],
+  "applicability": [
+    "shopify-app",
+    "shopify-theme",
+    "shopify-headless"
+  ],
+  "category": "shopify"
+}

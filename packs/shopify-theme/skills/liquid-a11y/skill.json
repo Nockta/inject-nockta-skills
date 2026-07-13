@@ -1,0 +1,30 @@
+{
+  "name": "liquid-a11y",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "default",
+  "description": "Build and audit Shopify Liquid theme accessibility against WCAG 2.2 and the ARIA Authoring Practices Guide. Use this whenever writing or reviewing .liquid sections, snippets, or blocks that render interactive storefront UI — product cards, carousels/sliders, cart drawers, add-to-cart and newsletter forms, collection filters/facets, quick-view or cart modals, predictive/instant search, mega menus, skip links, or anything touching focus, keyboard control, color contrast, or motion. Trigger this skill even when the user just says 'make this section accessible', 'add ARIA to my carousel', 'fix keyboard trap in my modal', 'a11y review my theme', or asks about screen reader support, focus management, or reduced motion in a Shopify theme — not only when they name WCAG or ARIA explicitly."
+}

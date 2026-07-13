@@ -1,0 +1,37 @@
+{
+  "name": "use-cases-before-crud",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Model NestJS application services around meaningful business operations rather than generic CRUD wrappers.",
+  "clashesWith": [
+    "nestjs-best-practices"
+  ],
+  "applicability": [
+    "nest"
+  ],
+  "category": "nestjs"
+}

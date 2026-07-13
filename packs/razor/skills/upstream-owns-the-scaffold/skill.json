@@ -1,0 +1,46 @@
+{
+  "name": "upstream-owns-the-scaffold",
+  "supportedAdapters": [
+    "claude",
+    "cursor",
+    "copilot",
+    "agent",
+    "antigravity"
+  ],
+  "outputs": {
+    "claude": {
+      "skills": true
+    },
+    "cursor": {
+      "skills": true
+    },
+    "copilot": {
+      "skills": true
+    },
+    "agent": {
+      "skills": true,
+      "agents": false
+    },
+    "antigravity": {
+      "skills": true
+    }
+  },
+  "enablement": "optional",
+  "description": "Delegate framework boilerplate to official scaffolders and apply lightweight architecture overlays afterward.",
+  "clashesWith": [
+    "callstack-create-react-native-library",
+    "nestjs-expert",
+    "nx-generate"
+  ],
+  "applicability": [
+    "next",
+    "vite-react-ts",
+    "nest",
+    "shopify-app",
+    "shopify-theme",
+    "shopify-headless",
+    "react-native",
+    "expo"
+  ],
+  "category": "tooling"
+}

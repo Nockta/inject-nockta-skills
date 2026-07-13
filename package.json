@@ -4,6 +4,28 @@
   "description": "Injects Nockta AI agent skill packs (Claude, Cursor, Copilot adapters) into existing repos.",
   "type": "module",
   "license": "Apache-2.0",
+  "keywords": [
+    "nockta",
+    "ai",
+    "skills",
+    "agent-skills",
+    "claude",
+    "claude-code",
+    "antigravity",
+    "cursor",
+    "copilot",
+    "agents.md",
+    "cli",
+    "scaffold"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nockta/inject-nockta-skills.git"
+  },
+  "homepage": "https://github.com/Nockta/inject-nockta-skills#readme",
+  "bugs": {
+    "url": "https://github.com/Nockta/inject-nockta-skills/issues"
+  },
   "bin": {
     "inject-nockta-skills": "./dist/cli.js"
   },

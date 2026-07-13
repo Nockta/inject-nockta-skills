@@ -40,6 +40,7 @@ upgrade later.
 - [Skill catalog overview](#skill-catalog-overview)
 - [Telemetry in bundled Shopify skills](#telemetry-in-bundled-shopify-skills)
 - [Attribution & license](#attribution--license)
+- [Releasing](#releasing)
 - [Contributing / authoring skills](#contributing--authoring-skills)
 
 ---
@@ -684,6 +685,13 @@ retain their own original licenses/provenance (see the clean-room note above and
 `PROVENANCE.md`). The licenses, copyright notices, and full license texts for **every** bundled
 third-party skill are collected — grouped by upstream repository — in the root
 [`THIRD-PARTY-LICENSES.md`](./THIRD-PARTY-LICENSES.md), which ships with the npm package.
+
+---
+
+## Releasing
+
+Maintainer-facing release process (tag push → CI publishes to npm with provenance, no tokens after
+first release) is documented in [`RELEASING.md`](./RELEASING.md).
 
 ---
 

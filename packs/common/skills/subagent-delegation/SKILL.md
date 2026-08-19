@@ -362,6 +362,11 @@ dispatching a worker on a **blocking** call and then sitting frozen until it ret
 dead, and the user's only way to say anything is to interrupt a running tool. A frozen desk isn't a
 clean desk, it's an abandoned one. The director keeps talking while the workers are out.
 
+**The desk stays clear for the user at all times.** After dispatching a worker, never poll,
+monitor, tail, or wait on it — do not check its status, do not loop until it finishes, do not fill
+time narrating. Say what you sent and END YOUR TURN; the completion notification comes to you. A
+desk watching its workers is a frozen desk with extra steps.
+
 So **default to background execution.** Dispatch the worker with `run_in_background: true`, then
 immediately hand control back to the user with a useful message — what you sent, what you expect
 back, and what you'll do with it — and end your turn. The desk stays **live**: the user can react,
@@ -370,9 +375,10 @@ runs. When the worker finishes you're notified, and you pick the thread back up 
 (This is exactly how the user has had to *force* questions in mid-task — make a live desk the norm,
 not the exception they have to interrupt for.)
 
-**Block on a foreground call only when waiting costs the user nothing** — the job is genuinely quick
-*and* you have nothing useful to say or do until it returns. If you'd otherwise be narrating
-"working on it…" while a multi-minute agent grinds, that's the tell: background it instead.
+**A foreground call is permissible only when it is genuinely quick *and* you have nothing to say or
+do until it returns — and it is never permissible for watching another worker.** If you'd otherwise
+be narrating "working on it…" while a multi-minute agent grinds, that's the tell: background it
+instead.
 
 Background and parallelism compose: fire a whole independent batch in the background at once, keep
 talking to the user, and fold in each result as it reports — and you can check on a long run or pull

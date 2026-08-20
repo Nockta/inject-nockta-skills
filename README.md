@@ -140,6 +140,8 @@ bundle of skills for a domain, described by a `pack.json`:
   "displayName": "Next.js",
   "description": "Nockta AI skills for Next.js App Router projects.",
   "requires": ["common"],           // pulls the common pack transitively
+  "tier": "companion",              // "inline-digest" (common only) | "companion" (everything else)
+  "agentTrigger": "Read before starting or reviewing any Next.js App Router work.",
   "skills": ["react-best-practices", "nextjs-app-router-patterns", "..."],
   "adapters": ["claude", "cursor", "copilot", "agent"]
 }
@@ -169,7 +171,7 @@ adapters exist; each writes to a distinct, well-known location:
 | `claude`      | `.claude/skills/<skill>/` (+ `.claude/agents/*.md`) | One directory per skill (full skill dir copied); flat agent files     |
 | `cursor`      | `.cursor/rules/nockta-<pack>.mdc`                   | One `.mdc` rule file **per pack** (YAML frontmatter, `alwaysApply`)   |
 | `copilot`     | `.github/instructions/nockta.instructions.md`       | **One** combined instructions file covering every pack                |
-| `agent`       | `AGENTS.md` (repo root)                             | **One** combined plain-markdown file covering every pack              |
+| `agent`       | `AGENTS.md` (repo root) + `docs/agents/<pack>.md` per pack | Two-tier guidemap: `common` inlines as a mechanical digest, every other pack (and `common` itself) gets a full companion file, plus a trailing skill-guide index |
 | `antigravity` | `.agents/skills/<skill>/`                           | One directory per skill (full skill dir copied) — Google Antigravity (IDE + `agy` CLI), the `.claude/` full-injection mirror; no agent files |
 
 See [Adapter outputs](#adapter-outputs) for the exact file rules per adapter.
@@ -342,6 +344,7 @@ identically for the root short-form and the `install` subcommand.
 | `--type <repoType>`       | install                   | Repo type for a standalone project root. Comma-separated for multiple types (e.g. `next,nest`).  |
 | `--target <spec>`         | install                   | Monorepo target `path:type` (canonical, **repeatable**); or bare `path` with `--type`.           |
 | `--monorepo`              | install                   | Force monorepo mode.                                                                              |
+| `--common-only`           | install                   | Install only `common` (+`razor`+`monorepo` when applicable) — no stack pack. Bypasses the "a repo type is required" check. Mutually exclusive with `--type` or any typed `--target` (bare `path:type`, or split-form `--target <path> --type <type>`); refused with one shared error message. |
 | `--adapters <adapters>`   | install                   | Comma-separated adapter list (`claude`, `cursor`, `copilot`, `agent`, `antigravity`).             |
 | `--yes`                   | install, sync             | Confirm a non-interactive install, or skip the wizard's final confirm step.                      |
 | `--exclude-skills <names>`| install                   | Comma-separated skill names to drop from the default set (excluding a `required` skill errors).   |
@@ -394,11 +397,16 @@ npx inject-nockta-skills install --type nest --adapters claude --dry-run
 # Monorepo (see the Monorepo usage section)
 npx inject-nockta-skills install \
   --target apps/web:next --target apps/api:nest --adapters claude --yes
+
+# Common-only — no stack pack, e.g. a bare monorepo root
+npx inject-nockta-skills install --target . --common-only --adapters claude,agent --yes
 ```
 
 Requirements & behavior:
 
-- `--type` (or `--target`) is required for a non-interactive install; so is `--adapters`.
+- `--type` (or `--target`) is required for a non-interactive install; so is `--adapters`. `--common-only`
+  is the one exception — it bypasses the repo-type requirement so only `common` (+`razor`+`monorepo`
+  when applicable) resolves, and cannot be combined with `--type` or a typed `--target`.
 - `--yes` is required to actually write (there's no interactive confirmation on the non-interactive
   path). `--dry-run` bypasses this — it never writes, so there's nothing to confirm.
 - On success, writes `.nockta/skills-profile.json`, `.nockta/generated-manifest.json` (and, for
@@ -477,7 +485,7 @@ What each adapter writes, in detail:
 | `claude`  | `.claude/skills/<skill>/` — the **entire** bundled skill directory copied verbatim (SKILL.md, companion docs, `scripts/`, `assets/`, …) **except** `skill.json` and `.DS_Store`. Plus `.claude/agents/<agent>.md` (flat) when the skill declares `outputs.claude.agents`. | Straight copy; a heavy skill ships fully self-contained (its `scripts/validate.mjs` runs from the target dir). |
 | `cursor`  | `.cursor/rules/nockta-<pack>.mdc` — **one rule file per pack**, YAML frontmatter (`description`, empty `globs`, `alwaysApply: true`) + the pack's skills concatenated. | "Always" rules — pack guidance is always-relevant. Filename is `nockta-`-prefixed to avoid colliding with user-owned `.cursor/rules/*.mdc`. |
 | `copilot` | `.github/instructions/nockta.instructions.md` — **one** combined file, one section per pack. | Never touches `.github/copilot-instructions.md`. |
-| `agent`   | `AGENTS.md` at the repo root — **one** combined plain-markdown file: the standing-mode contract block as preamble, then one section per pack, with a "Generated by inject-nockta-skills" intro. | No frontmatter. Never emits agent artifacts (AGENTS.md has no agent-registration mechanism). See [Standing-mode contract](#standing-mode-contract-root-agentsmd). |
+| `agent`   | `AGENTS.md` at the repo root (a two-tier guidemap, not a full inline dump) **plus** `docs/agents/<pack>.md` — one companion file per resolved pack, `common` included. | `AGENTS.md` carries the standing-mode contract preamble, an inline `## Common` section (a mechanical per-skill digest — each skill's whitelisted `"The idea"`/`"Doctrine"`/`"In one line"`/`"Overview"` section, or its full body when none of those headings are present), and a trailing `## Skill guides` index with one bullet per companion file (`- docs/agents/<pack>.md — <description> (<skill names>). <agentTrigger>`). Every pack's full rendered content — `common`'s included — always lands in its own `docs/agents/<pack>.md`, regardless of tier. No frontmatter. Never emits agent artifacts (AGENTS.md has no agent-registration mechanism). See [Standing-mode contract](#standing-mode-contract-root-agentsmd). |
 | `antigravity` | `.agents/skills/<skill>/` — the **entire** bundled skill directory copied verbatim (same blocklist as `claude`: everything **except** `skill.json` and `.DS_Store`). For Google Antigravity (the IDE and the `agy` CLI). | The full-injection **peer of `claude`** (not the text-only `agent` surface) — Antigravity gets "the `.claude/` treatment". Emits the plural `.agents/` (current default), never legacy `.agent/`. No agent files: Antigravity has no agents-dir concept, so a skill's `agents/*.md` ships only as an ordinary in-dir companion, never promoted to a registry (the worker-leaf rule rides the standing-mode contract in `AGENTS.md`, which Antigravity reads natively). |
 
 Cross-cutting rules:
@@ -706,10 +714,18 @@ Skills and packs live under `packs/`. The two manifests:
   "displayName": "Next.js",
   "description": "…",
   "requires": ["common"],
+  "tier": "companion",              // required: "inline-digest" (common only) | "companion" (every other pack)
+  "agentTrigger": "Read before starting or reviewing any Next.js App Router work.", // required, non-empty
   "skills": ["react-best-practices", "..."],
   "adapters": ["claude", "cursor", "copilot", "agent"]
 }
 ```
+
+`tier` and `agentTrigger` are read by the `agent` adapter's guidemap renderer (see
+[Adapter outputs](#adapter-outputs)): `tier` picks whether the pack renders as `AGENTS.md`'s inline
+`## Common` digest or as a companion-only pack, and `agentTrigger` becomes that pack's trigger clause
+in `AGENTS.md`'s trailing `## Skill guides` index. Both fields are required for every pack, `common`
+included.
 
 **`packs/<pack>/skills/<skill>/skill.json`** — declares one skill:
 

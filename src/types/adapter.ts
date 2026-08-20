@@ -30,6 +30,9 @@ export function isAdapterType(value: string): value is AdapterType {
   return (ADAPTER_TYPES as readonly string[]).includes(value);
 }
 
+/** Adapters pre-checked / defaulted when the caller picks none (decisions.md D40 addendum: `claude,agent`). */
+export const DEFAULT_ADAPTERS: readonly AdapterType[] = ["claude", "agent"];
+
 /**
  * Friendly display titles for the wizard's adapter choices (owner-authored, this pass). The enum
  * value in `AdapterType` never changes — it's still what routing/resolve/`--adapters`/output all

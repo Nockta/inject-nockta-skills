@@ -1,6 +1,6 @@
 import type { SkillCatalogEntry } from "../packs/skill-catalog.js";
 import type { AdapterType } from "../types/adapter.js";
-import { ADAPTER_TYPES } from "../types/adapter.js";
+import { ADAPTER_TYPES, DEFAULT_ADAPTERS } from "../types/adapter.js";
 import type { RepoType } from "../types/repo-type.js";
 import type { ParsedTarget } from "../core/parse-targets.js";
 import type { RepoTypeGuess } from "../core/detect-repo-type.js";
@@ -51,8 +51,6 @@ export type ControllerResult =
   | { kind: "cancelled"; reason: string };
 
 type StepOutcome = { kind: "next" } | { kind: "back" } | { kind: "cancel"; reason: string };
-
-const AVAILABLE_ADAPTERS: readonly AdapterType[] = ["claude", "cursor", "copilot", "agent"];
 
 /** The repo types in play for skill resolution: single-project uses `repoTypes`; monorepo the union of target types. */
 function effectiveRepoTypes(answers: WizardAnswers): RepoType[] {
@@ -203,7 +201,7 @@ async function runStep(
       const res = await presenter.renderStep(step);
       if (res.kind === "back") return { kind: "back" };
       let chosen = res.value as AdapterType[];
-      if (chosen.length === 0) chosen = [...AVAILABLE_ADAPTERS]; // empty pick -> sensible default (all available).
+      if (chosen.length === 0) chosen = [...DEFAULT_ADAPTERS]; // empty pick -> sensible default (D40 addendum).
       answers.adapters = chosen;
       return { kind: "next" };
     }

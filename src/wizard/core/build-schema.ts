@@ -2,7 +2,7 @@ import type { SkillCatalogEntry } from "../../packs/skill-catalog.js";
 import type { AdapterType } from "../../types/adapter.js";
 import type { RepoType } from "../../types/repo-type.js";
 import { REPO_TYPES, REPO_TYPE_TITLES, REPO_TYPE_DESCRIPTIONS } from "../../types/repo-type.js";
-import { ADAPTER_TYPES, ADAPTER_TITLES, ADAPTER_DESCRIPTIONS } from "../../types/adapter.js";
+import { ADAPTER_TYPES, ADAPTER_TITLES, ADAPTER_DESCRIPTIONS, DEFAULT_ADAPTERS } from "../../types/adapter.js";
 import type { RepoTypeGuess } from "../../core/detect-repo-type.js";
 import type { WorkspaceCandidate } from "../steps/select-targets.js";
 import { clashIdToDisplayName, isRazorEntry, offerableEntries } from "./skill-offering.js";
@@ -261,7 +261,7 @@ export function buildAdapterStep(): StepModel {
       value: adapter,
       label: displayTitle,
       title: displayTitle,
-      checked: available,
+      checked: (DEFAULT_ADAPTERS as readonly string[]).includes(adapter),
       disabled: !available,
     };
     if (!available) choice.disabledReason = "not available yet";

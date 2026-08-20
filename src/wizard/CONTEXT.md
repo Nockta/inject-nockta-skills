@@ -400,6 +400,12 @@ combination step 5 already used for required-tier rows, now labeled `🔒 requir
 
 ```
 src/wizard/
+  controller.ts            The back-aware Controller — the actual orchestrator that drives the
+                           Model <-> View workflow. Owns step index, back-navigation, and all
+                           runtime state. Never writes files; produces plain WizardAnswers.
+  core/build-schema.ts     The step Model builder (decisions.md D28) — produces the SAME
+                           serializable `StepModel` objects for CLI and web Views (one brain,
+                           two Views). Pure functions only, never prompts or touches I/O.
   run-install-wizard.ts   runWizardFlow() (pure-ish: awaits injected prompts, no process.stdout/
                            process.exit) + runInstallWizard() (the impure wrapper — prints
                            narration/preview + the final InstallResult, then process.exit).
@@ -417,29 +423,13 @@ src/wizard/
                              only) — same "prefill, not a general solution" spirit as
                              monorepo-doctor-checks.ts's shallow plausibility check
                              (src/core/CONTEXT.md).
-    select-repo-type.ts      steps 2-3, single-project branch (+ reused per-target in the
-                             monorepo branch) — M10 (D22): planRepoTypeStep() (pure, now returns
-                             `preChecked: RepoType[]` instead of a single `defaultType`, and
-                             every choice carries a `checked` flag) + selectRepoTypes() (thin
-                             prompt wrapper, RENAMED from selectRepoType() — now calls
-                             `prompts.checkbox()`, not `prompts.select()`, and returns
-                             `RepoType[]`). An explicit preset --type (comma-separated for
-                             multiple types, via `parseRepoTypesList()`) short-circuits WITHOUT
-                             even calling core/detect-repo-type.ts — the concrete mechanism
-                             behind "detection never overrides an explicit --type" (brief item 1,
-                             generalized to N types by D22). Every guessed candidate is
-                             pre-checked (`checked: true` on its choice) — the single-guess case
-                             is simply the one-item version of the same mechanism, not a distinct
-                             "fast path" code branch.
-    select-adapters.ts       step 4 — planAdapterStep() (pure) + selectAdapters(). As of D24
-                             (post-M8), ALL FOUR adapters (claude/cursor/copilot/agent) are
-                             offered — every one now has a real renderer (src/adapters/*).
-                             AVAILABLE_ADAPTERS is still kept in sync BY HAND with
-                             core/render-adapters.ts's actual dispatch, not derived from it
-                             automatically (same convention, still an empty "coming soon" set).
-                             `agent`'s choice carries a `description` (ADAPTER_DESCRIPTIONS map) —
-                             the only adapter that needs one, since its bare value doesn't
-                             self-explain which tools it covers the way claude/cursor/copilot do.
+    select-repo-type.ts      (LEGACY/UNWIRED — not imported or used by prod code; step logic
+                             now lives in core/build-schema.ts's `buildRepoTypeStep()` and
+                             controller.ts's orchestration).
+    select-adapters.ts       (LEGACY/UNWIRED — not imported or used by prod code; step logic
+                             now lives in core/build-schema.ts's `buildAdapterStep()` and
+                             controller.ts's orchestration). Adapter preselection defaults to
+                             `["claude", "agent"]` per decisions.md D40 addendum.
     select-skills.ts          step 5 (Milestone 7, new, spec §7.1/decisions.md D19; EXTENDED
                              Milestone 9, decisions.md D21) — planSkillSelectionStep() (pure) +
                              selectSkills(). Checkbox toggle list tagged with tier + source pack;
@@ -470,7 +460,8 @@ src/wizard/
                              computeRenderPlan(), writes nothing) + formatPreviewHuman(). M7:
                              gained an optional skillSelection param so the file list reflects
                              step 5's deltas.
-    confirm.ts                step 7 — confirmInstall(). A --yes preset short-circuits to true.
+    confirm.ts                (LEGACY/UNWIRED — not imported or used by prod code; step logic
+                             now lives in core/build-schema.ts's `buildConfirmStep()`).
     extras.ts                 step 9 (Milestone 7, renumbered from step 8 by the new step 5,
                              spec §7.10/D17) — runExtrasWizardStep(), a thin WizardPrompts
                              wrapper around ../core/run-extras.ts. Run ONLY after step 8 succeeds

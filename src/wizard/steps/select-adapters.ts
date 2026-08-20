@@ -1,4 +1,4 @@
-import { ADAPTER_TYPES, isAdapterType } from "../../types/adapter.js";
+import { ADAPTER_TYPES, DEFAULT_ADAPTERS, isAdapterType } from "../../types/adapter.js";
 import type { AdapterType } from "../../types/adapter.js";
 import type { WizardChoice, WizardPrompts } from "../prompts.js";
 
@@ -28,11 +28,18 @@ const ADAPTER_DESCRIPTIONS: Partial<Record<AdapterType, string>> = {
 
 export interface AdapterStepPlan {
   choices: WizardChoice<AdapterType>[];
-  /** Preselected when only one adapter is available — matches spec §7.2's own examples defaulting to `claude`. */
+  /** Fallback when the checkbox is submitted with nothing chosen (decisions.md D40 addendum, 2026-08-19: `claude,agent`, not "every available adapter"). */
   defaultSelected: AdapterType[];
 }
 
-/** Pure planner for wizard step 4 (spec §7.1: "Select adapters"). */
+/**
+ * Pure planner for wizard step 4 (spec §7.1: "Select adapters").
+ *
+ * NOTE (2026-08-20 audit): this module is NOT wired into the live wizard — `wizard/controller.ts`
+ * drives the real "adapters" step via `core/build-schema.ts`'s `buildAdapterStep()` instead (only
+ * this file's own test imports `planAdapterStep`/`selectAdapters`). Kept in sync with the live
+ * default anyway so it doesn't mislead a future reader the way its stale `claude`-only comment did.
+ */
 export function planAdapterStep(): AdapterStepPlan {
   const choices: WizardChoice<AdapterType>[] = ADAPTER_TYPES.map((adapter) => {
     const available = (AVAILABLE_ADAPTERS as readonly string[]).includes(adapter);
@@ -43,7 +50,7 @@ export function planAdapterStep(): AdapterStepPlan {
       ...(ADAPTER_DESCRIPTIONS[adapter] ? { description: ADAPTER_DESCRIPTIONS[adapter] } : {}),
     };
   });
-  return { choices, defaultSelected: [...AVAILABLE_ADAPTERS] };
+  return { choices, defaultSelected: [...DEFAULT_ADAPTERS] };
 }
 
 function parsePresetAdapters(raw: string): AdapterType[] | null {

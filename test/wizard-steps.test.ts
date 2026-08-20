@@ -172,7 +172,7 @@ describe("wizard step 4: select-adapters.ts", () => {
     expect(antigravity?.disabled).toBe(false);
     expect(agent?.description).toMatch(/AGENTS\.md/);
     expect(antigravity?.description).toMatch(/\.agents\/skills/);
-    expect(plan.defaultSelected).toEqual(["claude", "cursor", "copilot", "agent", "antigravity"]);
+    expect(plan.defaultSelected).toEqual(["claude", "agent"]);
   });
 
   it("selectAdapters: a valid --adapters preset short-circuits without prompting", async () => {
@@ -189,10 +189,10 @@ describe("wizard step 4: select-adapters.ts", () => {
     expect(prompts.calls.checkbox.length).toBe(1);
   });
 
-  it("selectAdapters: no preset, empty checkbox answer falls back to the default (all five)", async () => {
+  it("selectAdapters: no preset, empty checkbox answer falls back to the default (claude,agent — D40 addendum)", async () => {
     const prompts = makeFakePrompts({ checkbox: [] });
     const result = await selectAdapters(prompts);
-    expect(result).toEqual(["claude", "cursor", "copilot", "agent", "antigravity"]);
+    expect(result).toEqual(["claude", "agent"]);
   });
 
   it("selectAdapters: no preset, user picks explicitly", async () => {

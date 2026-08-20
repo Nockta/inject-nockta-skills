@@ -2,7 +2,7 @@ import { detectRepoTypeAcrossWorkspace } from "../core/detect-repo-type.js";
 import { resolvePacks } from "../packs/resolve-packs.js";
 import { buildSkillCatalog } from "../packs/skill-catalog.js";
 import { getPacksPath } from "../packs/get-pack-path.js";
-import { ADAPTER_TYPES, isAdapterType } from "../types/adapter.js";
+import { isAdapterType, DEFAULT_ADAPTERS } from "../types/adapter.js";
 import type { AdapterType } from "../types/adapter.js";
 import { parseRepoTypesList } from "../types/repo-type.js";
 import type { RepoType } from "../types/repo-type.js";
@@ -46,8 +46,6 @@ export interface WebSchemaResult {
   repoTypes: RepoType[];
   adapters: AdapterType[];
 }
-
-const DEFAULT_ADAPTERS: readonly AdapterType[] = ADAPTER_TYPES; // claude/cursor/copilot/agent/antigravity
 
 function parseAdapters(raw: string | undefined): AdapterType[] {
   if (!raw) return [...DEFAULT_ADAPTERS];

@@ -1,6 +1,6 @@
 {
   "name": "inject-nockta-skills",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Injects Nockta AI agent skill packs (Claude, Cursor, Copilot adapters) into existing repos.",
   "type": "module",
   "license": "Apache-2.0",

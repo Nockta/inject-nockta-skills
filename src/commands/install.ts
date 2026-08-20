@@ -47,6 +47,16 @@ export interface InstallCliOptions {
   targets?: string[];
   /** Raw `--monorepo` flag — forces monorepo mode (spec §7.3, M5). */
   monorepo?: boolean;
+  /**
+   * Raw `--common-only` flag (decisions.md — new entry, see
+   * `docs/superpowers/specs/2026-08-19-init-monorepo-design.md` §5.3) — bypasses the
+   * "--type required" / "target must carry a type" checks below and forces an empty repo-type
+   * request (`repoTypes: []` / every target's `types: []`), so only `common` (+`razor`+`monorepo`
+   * when applicable) resolves — no stack pack. Mutually exclusive with ANY target form that
+   * carries a repo type (a bare `--type` flag, a colon-form `--target <path>:<type>`, or a
+   * split-form `--target <path> --type <type>`) — see `findCommonOnlyConflictType()` below.
+   */
+  commonOnly?: boolean;
   /** Raw `--adapters` flag value (comma-separated). */
   adapters?: string;
   /** Raw `--yes` flag. */
@@ -211,6 +221,24 @@ function parseAdaptersArg(raw: string | undefined): ParsedAdapters | InvalidAdap
 }
 
 /**
+ * Finds the repo-type name a `--common-only` request conflicts with, if any (spec §5.3's three
+ * refused shapes): a bare `--type <repoType>` (single-project or split-form monorepo), or a
+ * colon-form `--target <path>:<repoType>` target. Returns the FIRST offending type name found
+ * (colon-form targets checked first, in argv order, then the `--type` flag) for the exact-text
+ * error message; `null` when nothing conflicts (the accepted bare-self-target shape).
+ */
+function findCommonOnlyConflictType(type: string | undefined, rawTargets: string[]): string | null {
+  for (const raw of rawTargets) {
+    const idx = raw.indexOf(":");
+    if (idx === -1) continue;
+    const rawType = raw.slice(idx + 1).trim();
+    if (rawType) return rawType.split("+")[0] ?? rawType;
+  }
+  if (type) return type.split(",")[0] ?? type;
+  return null;
+}
+
+/**
  * Pure(ish) computation of the `install` command result. Does real
  * filesystem I/O (spec §13.1, §14 safety rules restrict it to `.claude/`
  * and `.nockta/` under `options.targetDir`) but no `process.stdout`/
@@ -230,6 +258,20 @@ export function buildInstallResult(options: InstallCliOptions): InstallResult {
   const targetDir = options.targetDir ?? process.cwd();
 
   const rawTargets = options.targets ?? [];
+
+  // --common-only conflict check (spec §5.3) — runs before EITHER path below, so both the
+  // single-project and monorepo branches inherit the same refusal for free.
+  if (options.commonOnly) {
+    const conflictType = findCommonOnlyConflictType(options.type, rawTargets);
+    if (conflictType) {
+      const packageVersion = options.packageVersion ?? readRunningPackageVersion();
+      const message =
+        `--common-only cannot be combined with a repo type ("${conflictType}"). Remove --type / ` +
+        'the ":<type>" suffix on --target to install common-only, or drop --common-only to install with a type.';
+      return invalidOptions(message, emptyData(null, [], targetDir, packageVersion));
+    }
+  }
+
   // Chosen semantics (brief item 3 — "document the chosen semantics"): presence of ANY
   // `--target` flag is itself sufficient signal of monorepo intent (it is the only way to name
   // a target at all); `--monorepo` is an explicit alternate way to force the same mode. Detected
@@ -327,18 +369,24 @@ function buildDryRunResult(
 function buildSingleProjectInstallResult(options: InstallCliOptions, targetDir: string): InstallResult {
   const packageVersion = options.packageVersion ?? readRunningPackageVersion();
 
-  // --type (D22: comma-separated multi-type)
-  if (!options.type) {
+  // --type (D22: comma-separated multi-type). --common-only (spec §5.3) skips this requirement
+  // entirely — by the time we get here, buildInstallResult() has already refused any
+  // --common-only request that ALSO carries --type, so options.type is guaranteed absent
+  // whenever options.commonOnly is true.
+  if (!options.type && !options.commonOnly) {
     return invalidOptions(
       `missing required --type <repoType>[,<repoType>...]. Valid repo types: ${REPO_TYPES.join(", ")}`,
       emptyData(null, [], targetDir, packageVersion),
     );
   }
-  const parsedTypes = parseRepoTypesList(options.type, ",");
-  if (!parsedTypes.ok) {
-    return invalidOptions(parsedTypes.error, emptyData(null, [], targetDir, packageVersion));
+  const repoTypes: RepoType[] = [];
+  if (options.type) {
+    const parsedTypes = parseRepoTypesList(options.type, ",");
+    if (!parsedTypes.ok) {
+      return invalidOptions(parsedTypes.error, emptyData(null, [], targetDir, packageVersion));
+    }
+    repoTypes.push(...parsedTypes.types);
   }
-  const repoTypes = parsedTypes.types;
 
   // --adapters
   const parsedAdapters = parseAdaptersArg(options.adapters);
@@ -473,7 +521,7 @@ function buildMonorepoInstallResult(options: InstallCliOptions, targetDir: strin
     );
   }
 
-  const parsed = parseTargetArgs({ targetArgs: rawTargets, type: options.type });
+  const parsed = parseTargetArgs({ targetArgs: rawTargets, type: options.type, commonOnly: options.commonOnly });
   if (!parsed.ok) {
     return invalidOptions(parsed.errors.join("; "), emptyData(null, [], targetDir, packageVersion));
   }

@@ -473,6 +473,19 @@ it was run for the 3 real common skills).
   isolation; `buildMonorepoInstallResult()` resolves each parsed target against `targetDir`
   afterward (exists, is a directory, does not escape the repo root via `resolve()` + a prefix
   check) — collecting every bad target into ONE error message rather than failing on the first.
+- **`--common-only` (new, see
+  `docs/superpowers/specs/2026-08-19-init-monorepo-design.md` §5.3) bypasses the type-required
+  checks on both install paths.** `buildInstallResult()` runs a conflict check
+  (`findCommonOnlyConflictType()`) before either the single-project or monorepo branch: any
+  `--type`, colon-form `--target <path>:<type>`, or split-form `--target <path> --type <type>`
+  combined with `--common-only` is refused with one exact-text error message naming the
+  offending type. The one accepted case is a bare, colonless `--target <path>` (or a
+  single-project install with no `--target` at all) and no `--type` — `buildSingleProjectInstallResult()`
+  skips its "missing required --type" check when `options.commonOnly` is set (`repoTypes: []`),
+  and `parseTargetArgs({ ..., commonOnly: true })` (`core/parse-targets.ts`) gives every bare
+  target `types: []` instead of erroring. `repoTypes: []` flows unchanged through the existing
+  `resolvePacks()` pipeline — only `common`(+`razor`+`monorepo`) resolves, no stack pack; no
+  changes needed there.
 - **A `--target` whose resolved path IS the repo root normalizes to `"."`, not the raw path
   (bugfix, post-M5).** `buildMonorepoInstallResult()` compares each parsed target's
   `resolve(targetDir, t.path)` against `resolve(targetDir)`; on a match (e.g. `--target

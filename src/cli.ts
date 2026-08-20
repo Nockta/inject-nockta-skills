@@ -24,6 +24,7 @@ interface RootOpts {
   type?: string;
   target: string[];
   monorepo?: boolean;
+  commonOnly?: boolean;
   adapters?: string;
   yes?: boolean;
   withClaudeMem?: boolean;
@@ -48,6 +49,7 @@ async function runRootInstall(program: Command): Promise<void> {
     type: opts.type,
     targets: opts.target,
     monorepo: opts.monorepo,
+    commonOnly: opts.commonOnly,
     adapters: opts.adapters,
     yes: opts.yes,
     withClaudeMem: opts.withClaudeMem,
@@ -91,6 +93,11 @@ export function buildProgram(): Command {
       [] as string[],
     )
     .option("--monorepo", "force monorepo mode — see src/commands/install.ts for the exact semantics")
+    .option(
+      "--common-only",
+      "install only common (+razor+monorepo) skills, no stack pack — mutually exclusive with " +
+        "--type or a typed --target; see docs/superpowers/specs/2026-08-19-init-monorepo-design.md §5.3",
+    )
     .option("--adapters <adapters>", "comma-separated adapter list (e.g. claude)")
     .option("--yes", "confirm a non-interactive install, or skip the wizard's final confirm step")
     .option(

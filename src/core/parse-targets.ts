@@ -21,6 +21,17 @@ export interface ParseTargetsOptions {
    * comma-separated for multiple types (D22), e.g. "shopify-theme,vite-react-ts".
    */
   type?: string;
+  /**
+   * decisions.md (new `--common-only` entry — see
+   * `docs/superpowers/specs/2026-08-19-init-monorepo-design.md` §5.3). The caller
+   * (`commands/install.ts::buildInstallResult()`) has ALREADY refused any request where
+   * `targetArgs` carries a colon-form type or `type` is set, so by the time this is `true` every
+   * `targetArgs` entry here is a bare, colonless path. Relaxes two split-form-only rules for that
+   * case: a bare target no longer requires `type` (each gets `types: []` instead of erroring), and
+   * split form is no longer limited to a single target (there is no `--type` flag left to collide
+   * across multiple targets when common-only).
+   */
+  commonOnly?: boolean;
 }
 
 export type ParseTargetsResult = { ok: true; targets: ParsedTarget[] } | { ok: false; errors: string[] };
@@ -65,6 +76,28 @@ export function parseTargetArgs(options: ParseTargetsOptions): ParseTargetsResul
   }
 
   if (!anyColon) {
+    if (options.commonOnly) {
+      const targets: ParsedTarget[] = [];
+      for (const raw of targetArgs) {
+        const rawPath = normalizePath(raw);
+        if (!rawPath) {
+          errors.push("--target path must not be empty");
+          continue;
+        }
+        targets.push({ path: rawPath, types: [] });
+      }
+      if (errors.length > 0) return { ok: false, errors };
+
+      const seenCommonOnly = new Set<string>();
+      for (const t of targets) {
+        if (seenCommonOnly.has(t.path)) errors.push(`duplicate --target path "${t.path}"`);
+        seenCommonOnly.add(t.path);
+      }
+      if (errors.length > 0) return { ok: false, errors };
+
+      return { ok: true, targets };
+    }
+
     // Split-form convenience — valid only for a single target (D9).
     if (targetArgs.length > 1) {
       return {

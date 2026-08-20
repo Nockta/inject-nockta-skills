@@ -153,3 +153,42 @@ describe("parseTargetArgs (decisions.md D9/D22, spec §7.3)", () => {
     });
   });
 });
+
+describe("parseTargetArgs — commonOnly (docs/superpowers/specs/2026-08-19-init-monorepo-design.md §5.3)", () => {
+  it("a single bare target with commonOnly gets types: []", () => {
+    const result = parseTargetArgs({ targetArgs: ["."], commonOnly: true });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.targets).toEqual([{ path: ".", types: [] }]);
+    }
+  });
+
+  it("multiple bare targets with commonOnly are all accepted (no --type to collide across them)", () => {
+    const result = parseTargetArgs({ targetArgs: ["apps/web", "apps/api"], commonOnly: true });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.targets).toEqual([
+        { path: "apps/web", types: [] },
+        { path: "apps/api", types: [] },
+      ]);
+    }
+  });
+
+  it("rejects an empty target path even under commonOnly", () => {
+    const result = parseTargetArgs({ targetArgs: [""], commonOnly: true });
+    expect(result.ok).toBe(false);
+  });
+
+  it("rejects duplicate bare target paths under commonOnly", () => {
+    const result = parseTargetArgs({ targetArgs: ["apps/web", "apps/web"], commonOnly: true });
+    expect(result.ok).toBe(false);
+  });
+
+  it("commonOnly: false (default) behavior is completely unchanged — still requires --type for a bare target", () => {
+    const result = parseTargetArgs({ targetArgs: ["apps/web"] });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.errors[0]).toContain("requires --type");
+    }
+  });
+});

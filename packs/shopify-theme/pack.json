@@ -6,6 +6,8 @@
   "requires": [
     "common"
   ],
+  "tier": "companion",
+  "agentTrigger": "Read before building or reviewing a Shopify Liquid/theme project.",
   "skills": [
     "shopify-liquid",
     "liquid-a11y",

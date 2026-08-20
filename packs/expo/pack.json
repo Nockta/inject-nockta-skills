@@ -5,6 +5,8 @@
   "requires": [
     "react-native"
   ],
+  "tier": "companion",
+  "agentTrigger": "Read before starting or reviewing any Expo-managed React Native work.",
   "skills": [
     "expo-router",
     "expo-ui",

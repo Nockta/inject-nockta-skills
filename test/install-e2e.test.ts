@@ -159,6 +159,31 @@ describe("install e2e (buildInstallResult, real bundled packs/common)", () => {
     // No override authored for paper-trail yet — source and output hash match.
     expect(paperTrailRecord.sourceHash).toBe(paperTrailRecord.outputHash);
   });
+
+  it("AGENTS.md guidemap size ceiling (decisions.md D<next>): real bundled packs stay well under budget", () => {
+    const result = buildInstallResult({ type: "next", adapters: "agent", yes: true, targetDir, packageVersion: "9.9.9-test" });
+    expect(result.ok).toBe(true);
+
+    const agentsMdBytes = readFileSync(join(targetDir, "AGENTS.md"));
+    // Headroom above both the measured current-selection figure (~43,367 B) and the hypothetical
+    // maximal-common-selection figure (~58,171 B) — see docs/superpowers/specs/
+    // 2026-08-19-agents-md-guidemap-design.md "Recomputed size" — while staying far below the
+    // pre-change 163,561 B baseline. Guards against an accidental tier flip or whitelist
+    // narrowing silently regressing the guidemap's whole purpose.
+    expect(agentsMdBytes.length).toBeLessThan(65_000);
+
+    const commonCompanionBytes = readFileSync(join(targetDir, "docs", "agents", "common.md"));
+    // The companion file's full-body content must NOT have silently shrunk along with AGENTS.md's
+    // own digest — it stays close to the pre-change measured `## Common` section size (~91,305 B,
+    // see the spec's honesty note re: measurement timing and the subagent-delegation drift) since
+    // it is UNCONDITIONALLY the full, unslimmed body for every rendered skill. A wide-but-bounded
+    // band (not "a few hundred bytes" as the spec's own text puts it) — deliberately loosened here
+    // to avoid test brittleness against ordinary prose edits to skill SKILL.md files, while still
+    // catching a real regression (e.g. an accidental slim-companion-file bug would drop this well
+    // below 85,000).
+    expect(commonCompanionBytes.length).toBeGreaterThan(85_000);
+    expect(commonCompanionBytes.length).toBeLessThan(100_000);
+  });
 });
 
 /**

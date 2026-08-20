@@ -166,11 +166,13 @@ describe("5-adapter install (claude + cursor + copilot + agent + antigravity) �
     expect(result.exitCode).toBe(0);
     expect(result.data.adapters).toEqual(["claude", "cursor", "copilot", "agent", "antigravity"]);
 
-    // Safety boundary (spec §14, decisions.md D24/D34/D35): the 5 adapter output roots + .nockta,
-    // PLUS CLAUDE.md (@AGENTS.md import, claude selected). `.agents/` (antigravity, dir) and root
-    // `AGENTS.md` (agent, file) are cleanly separate artifacts. No standalone AGENTS.md side-effect
-    // here — the agent adapter OWNS AGENTS.md (tracked), block rides as its preamble.
-    expect(readdirSync(targetDir).sort()).toEqual([".agents", ".claude", ".cursor", ".github", ".nockta", "AGENTS.md", "CLAUDE.md"]);
+    // Safety boundary (spec §14, decisions.md D24/D34/D35/D<next>): the 5 adapter output roots +
+    // .nockta, PLUS CLAUDE.md (@AGENTS.md import, claude selected). `.agents/` (antigravity, dir)
+    // and root `AGENTS.md` (agent, file) are cleanly separate artifacts. No standalone AGENTS.md
+    // side-effect here — the agent adapter OWNS AGENTS.md (tracked), block rides as its preamble.
+    // `docs/` is new (decisions.md D<next>, AGENTS.md guidemap): the agent adapter now also writes
+    // docs/agents/<pack>.md companion files (common + next both rendered here).
+    expect(readdirSync(targetDir).sort()).toEqual([".agents", ".claude", ".cursor", ".github", ".nockta", "AGENTS.md", "CLAUDE.md", "docs"]);
 
     const agentsMd = readFileSync(join(targetDir, "AGENTS.md"), "utf8");
     expect(agentsMd).toMatch(/paper-trail/);
@@ -243,17 +245,24 @@ describe("5-adapter install (claude + cursor + copilot + agent + antigravity) �
     expect(finalDoctor.data.healthy).toBe(true);
   });
 
-  it("agent adapter alone: single manifest record, one file at repo root, nothing else written", () => {
+  it("agent adapter alone: root AGENTS.md + one docs/agents/<pack>.md companion per rendering pack, nothing else (decisions.md D<next>)", () => {
     const result = buildInstallResult({ type: "next", adapters: "agent", yes: true, targetDir, packageVersion: "9.9.9-test" });
     expect(result.ok).toBe(true);
-    expect(readdirSync(targetDir).sort()).toEqual([".nockta", "AGENTS.md"]);
+    // AGENTS.md guidemap: common is "inline-digest" (also gets a companion file now), next is
+    // "companion" — both packs write docs/agents/<pack>.md alongside the root file.
+    expect(readdirSync(targetDir).sort()).toEqual([".nockta", "AGENTS.md", "docs"]);
+    expect(existsSync(join(targetDir, "docs", "agents", "common.md"))).toBe(true);
+    expect(existsSync(join(targetDir, "docs", "agents", "next.md"))).toBe(true);
 
     const manifest = JSON.parse(readFileSync(join(targetDir, ".nockta", "generated-manifest.json"), "utf8"));
-    expect(manifest.files.length).toBe(1);
-    expect(manifest.files[0].path).toBe("AGENTS.md");
-    // Post-content-import (decisions.md D26): next is installable too, so AGENTS.md's one
-    // manifest record now covers both packs.
-    expect(manifest.files[0].pack).toBe("common,next");
+    // AGENTS.md + docs/agents/common.md + docs/agents/next.md.
+    expect(manifest.files.length).toBe(3);
+    const paths = manifest.files.map((f: { path: string }) => f.path).sort();
+    expect(paths).toEqual(["AGENTS.md", "docs/agents/common.md", "docs/agents/next.md"]);
+    const agentsRecord = manifest.files.find((f: { path: string }) => f.path === "AGENTS.md");
+    // Post-content-import (decisions.md D26): next is installable too, so AGENTS.md's own
+    // manifest record still covers both packs (via its Skill-guides bullets, not inlined content).
+    expect(agentsRecord.pack).toBe("common,next");
   });
 
   it("antigravity adapter alone (D35): .agents/skills/ tree + AGENTS.md side-effect; nothing else", () => {

@@ -29,6 +29,8 @@ describe("readPackManifest", () => {
       displayName: "Next.js",
       description: "Nockta AI skills for Next.js App Router projects.",
       requires: ["common"],
+      tier: "companion",
+      agentTrigger: "Read before starting or reviewing any Next.js App Router work.",
       skills: ["app-router-architect"],
       adapters: ["claude", "cursor", "copilot"],
     });
@@ -40,6 +42,8 @@ describe("readPackManifest", () => {
       displayName: "Next.js",
       description: "Nockta AI skills for Next.js App Router projects.",
       requires: ["common"],
+      tier: "companion",
+      agentTrigger: "Read before starting or reviewing any Next.js App Router work.",
       skills: ["app-router-architect"],
       adapters: ["claude", "cursor", "copilot"],
     });
@@ -51,6 +55,8 @@ describe("readPackManifest", () => {
       displayName: "Common",
       description: "d",
       requires: [],
+      tier: "inline-digest",
+      agentTrigger: "Read when you need a skill's full step-by-step procedure.",
       skills: ["paper-trail"],
       adapters: ["claude"],
     });
@@ -80,11 +86,78 @@ describe("readPackManifest", () => {
     }
   });
 
+  it("throws PackManifestError when required fields are missing (now also checks tier/agentTrigger)", () => {
+    writePackJson({ name: "x", displayName: "X" });
+    try {
+      readPackManifest(dir);
+      expect.unreachable("expected readPackManifest to throw");
+    } catch (error) {
+      expect(error).toBeInstanceOf(PackManifestError);
+      const issues = (error as PackManifestError).issues;
+      expect(issues).toContain('"tier" must be "inline-digest" or "companion"');
+      expect(issues).toContain('"agentTrigger" must be a non-empty string');
+    }
+  });
+
+  it("throws PackManifestError when tier is an invalid string", () => {
+    writePackJson({
+      name: "x",
+      displayName: "X",
+      description: "d",
+      requires: [],
+      tier: "inline",
+      agentTrigger: "Read before X.",
+      skills: ["a"],
+      adapters: ["claude"],
+    });
+    try {
+      readPackManifest(dir);
+      expect.unreachable("expected readPackManifest to throw");
+    } catch (error) {
+      expect((error as PackManifestError).issues).toContain('"tier" must be "inline-digest" or "companion"');
+    }
+  });
+
+  it("throws PackManifestError when agentTrigger is an empty string", () => {
+    writePackJson({
+      name: "x",
+      displayName: "X",
+      description: "d",
+      requires: [],
+      tier: "companion",
+      agentTrigger: "",
+      skills: ["a"],
+      adapters: ["claude"],
+    });
+    try {
+      readPackManifest(dir);
+      expect.unreachable("expected readPackManifest to throw");
+    } catch (error) {
+      expect((error as PackManifestError).issues).toContain('"agentTrigger" must be a non-empty string');
+    }
+  });
+
+  it("accepts tier: \"companion\" (the non-inline-digest tier)", () => {
+    writePackJson({
+      name: "x",
+      displayName: "X",
+      description: "d",
+      requires: [],
+      tier: "companion",
+      agentTrigger: "Read before X.",
+      skills: ["a"],
+      adapters: ["claude"],
+    });
+    expect(readPackManifest(dir).tier).toBe("companion");
+  });
+
   it("throws PackManifestError on an unknown adapter value", () => {
     writePackJson({
       name: "x",
       displayName: "X",
       description: "d",
+      tier: "companion",
+      agentTrigger: "Read before X.",
       requires: [],
       skills: ["a"],
       adapters: ["claude", "windsurf"],
@@ -97,6 +170,8 @@ describe("readPackManifest", () => {
       name: "x",
       displayName: "X",
       description: "d",
+      tier: "companion",
+      agentTrigger: "Read before X.",
       requires: [],
       skills: [],
       adapters: ["claude"],

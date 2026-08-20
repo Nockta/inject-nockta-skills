@@ -647,8 +647,16 @@ describe("runWizardFlow — skill selection (spec §7.1, decisions.md D19) — d
       JSON.stringify({ name: skill, supportedAdapters: ["claude"], outputs: { claude: { skills: true } }, enablement }),
     );
   }
-  function writePack(name: string, skills: string[]): void {
-    writeFile(join(packsRoot, name, "pack.json"), JSON.stringify({ name, displayName: name, description: name, requires: [], skills, adapters: ["claude"] }));
+  function writePack(
+    name: string,
+    skills: string[],
+    tier: "inline-digest" | "companion" = "companion",
+    agentTrigger = "Read before working in this pack's domain.",
+  ): void {
+    writeFile(
+      join(packsRoot, name, "pack.json"),
+      JSON.stringify({ name, displayName: name, description: name, requires: [], tier, agentTrigger, skills, adapters: ["claude"] }),
+    );
   }
 
   beforeEach(() => {
@@ -736,8 +744,16 @@ describe("runWizardFlow — D21 skill dependency lock/release, end to end throug
       }),
     );
   }
-  function writePack(name: string, skills: string[]): void {
-    writeFile(join(packsRoot, name, "pack.json"), JSON.stringify({ name, displayName: name, description: name, requires: [], skills, adapters: ["claude"] }));
+  function writePack(
+    name: string,
+    skills: string[],
+    tier: "inline-digest" | "companion" = "companion",
+    agentTrigger = "Read before working in this pack's domain.",
+  ): void {
+    writeFile(
+      join(packsRoot, name, "pack.json"),
+      JSON.stringify({ name, displayName: name, description: name, requires: [], tier, agentTrigger, skills, adapters: ["claude"] }),
+    );
   }
 
   beforeEach(() => {

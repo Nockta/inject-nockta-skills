@@ -2,6 +2,21 @@ import type { AdapterType } from "./adapter.js";
 import type { RepoType } from "./repo-type.js";
 
 /**
+ * Rendering tier for the `agent` adapter's AGENTS.md guidemap (decisions.md D<next>, AGENTS.md
+ * guidemap design). "inline-digest" — this pack's rendered skills ALSO get a
+ * mechanically-extracted digest (or, per skill, a full-body fallback) inlined into AGENTS.md's
+ * own body, IN ADDITION TO a full companion file at docs/agents/<pack>.md. "companion" — this
+ * pack's rendered skills appear ONLY in their companion file; nothing from this pack is ever
+ * inlined into AGENTS.md. Curatorial, per-pack — never derived from skill count or any other
+ * structural signal. Read only by `adapters/agent/render.ts`; every other adapter ignores it.
+ */
+export type PackTier = "inline-digest" | "companion";
+
+export function isPackTier(value: unknown): value is PackTier {
+  return value === "inline-digest" || value === "companion";
+}
+
+/**
  * `pack.json` shape — the manifest bundled at `packs/<pack-name>/pack.json`.
  *
  * Spec: startup docs/inject-nockta-skills.updated.md §12 (Pack Architecture).
@@ -15,6 +30,17 @@ export interface PackManifest {
   description: string;
   /** Other pack names this pack depends on (followed transitively by resolve-packs). */
   requires: string[];
+  /** Rendering tier for the `agent` adapter's AGENTS.md guidemap (see `PackTier`). Required — every pack.json states this explicitly, no silent default (decisions.md D<next>). */
+  tier: PackTier;
+  /**
+   * Trigger sentence for this pack's `## Skill guides` bullet in AGENTS.md (decisions.md
+   * D<next>), e.g. "Read before starting or reviewing any Next.js App Router work." Authoring
+   * convention (not machine-enforced beyond non-empty, see `read-pack-manifest.ts`): starts with
+   * "Read before" or "Read when," states the concrete circumstance that makes this pack's
+   * companion file worth a one-hop fetch, ends in a period. Copied verbatim into the generated
+   * bullet at render time, never hand-cached, so it can't drift from the pack's own manifest.
+   */
+  agentTrigger: string;
   /** Declared skill names this pack ships (each expected under `skills/<name>/`). */
   skills: string[];
   /** Adapters this pack renders for, structurally (see §8.1). */

@@ -41,10 +41,26 @@ function writeSkill(
   );
 }
 
-function writePack(packsRoot: string, name: string, displayName: string, skills: string[]): void {
+function writePack(
+  packsRoot: string,
+  name: string,
+  displayName: string,
+  skills: string[],
+  tier: "inline-digest" | "companion" = "companion",
+  agentTrigger = "Read before working in this pack's domain.",
+): void {
   writeFile(
     join(packsRoot, name, "pack.json"),
-    JSON.stringify({ name, displayName, description: `${displayName} pack`, requires: [], skills, adapters: ["claude", "cursor", "copilot"] }),
+    JSON.stringify({
+      name,
+      displayName,
+      description: `${displayName} pack`,
+      requires: [],
+      tier,
+      agentTrigger,
+      skills,
+      adapters: ["claude", "cursor", "copilot"],
+    }),
   );
 }
 

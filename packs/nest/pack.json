@@ -5,6 +5,8 @@
   "requires": [
     "common"
   ],
+  "tier": "companion",
+  "agentTrigger": "Read before starting or reviewing any NestJS backend work.",
   "skills": [
     "nestjs-best-practices",
     "nestjs-expert"

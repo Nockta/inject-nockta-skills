@@ -26,6 +26,8 @@ function baseManifest(name: string, overrides: Record<string, unknown> = {}) {
     displayName: name,
     description: `${name} pack`,
     requires: [],
+    tier: "companion",
+    agentTrigger: "Read before working in this pack's domain.",
     skills: ["placeholder-skill"],
     adapters: ["claude"],
     ...overrides,

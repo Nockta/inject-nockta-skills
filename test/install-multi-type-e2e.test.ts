@@ -27,6 +27,8 @@ function writePackManifest(packsRoot: string, name: string, overrides: Record<st
       displayName: name,
       description: `${name} pack`,
       requires: [],
+      tier: "companion",
+      agentTrigger: "Read before working in this pack's domain.",
       skills: [],
       adapters: ["claude"],
       ...overrides,

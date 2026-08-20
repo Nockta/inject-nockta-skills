@@ -10,12 +10,27 @@ function writeFile(path: string, content: string): void {
   writeFileSync(path, content, "utf8");
 }
 
-function makePackEntry(packsRoot: string, name: string, skills: string[]): ResolvedPackEntry {
+function makePackEntry(
+  packsRoot: string,
+  name: string,
+  skills: string[],
+  tier: "inline-digest" | "companion" = "inline-digest",
+  agentTrigger = "Read before working in this pack's domain.",
+): ResolvedPackEntry {
   const path = join(packsRoot, name);
   return {
     name,
     path,
-    manifest: { name, displayName: `${name} display`, description: `${name} description`, requires: [], skills, adapters: ["claude", "cursor", "copilot", "agent"] },
+    manifest: {
+      name,
+      displayName: `${name} display`,
+      description: `${name} description`,
+      requires: [],
+      skills,
+      adapters: ["claude", "cursor", "copilot", "agent"],
+      tier,
+      agentTrigger,
+    },
     installable: true,
     skills: skills.map((s) => ({ name: s, hasContent: true })),
   };
@@ -35,7 +50,14 @@ describe("renderAgentAdapter (spec §8.5, decisions.md D1/D19/D24)", () => {
     rmSync(targetDir, { recursive: true, force: true });
   });
 
-  function writeSkill(pack: string, skill: string, content: string, supportedAdapters = ["claude", "cursor", "copilot", "agent"], agentOutputs = true): void {
+  function writeSkill(
+    pack: string,
+    skill: string,
+    content: string,
+    supportedAdapters = ["claude", "cursor", "copilot", "agent"],
+    agentOutputs = true,
+    description = `${skill} test description.`,
+  ): void {
     const skillDir = join(packsRoot, pack, "skills", skill);
     writeFile(join(skillDir, "SKILL.md"), content);
     writeFile(
@@ -49,6 +71,7 @@ describe("renderAgentAdapter (spec §8.5, decisions.md D1/D19/D24)", () => {
           copilot: supportedAdapters.includes("copilot") ? { skills: true } : false,
           agent: supportedAdapters.includes("agent") ? { skills: agentOutputs, agents: true } : false,
         },
+        description,
       }),
     );
   }
@@ -60,7 +83,8 @@ describe("renderAgentAdapter (spec §8.5, decisions.md D1/D19/D24)", () => {
 
     const result = renderAgentAdapter({ targetDir, packs, packsRoot, effectiveSkills: new Set(["skill-a", "skill-b"]) });
 
-    expect(result.written.length).toBe(1);
+    // 2 companion files (docs/agents/pack-a.md, docs/agents/pack-b.md) + the shared root AGENTS.md entry.
+    expect(result.written.length).toBe(3);
     const outputPath = join(targetDir, "AGENTS.md");
     expect(existsSync(outputPath)).toBe(true);
     const content = readFileSync(outputPath, "utf8");
@@ -78,7 +102,7 @@ describe("renderAgentAdapter (spec §8.5, decisions.md D1/D19/D24)", () => {
     // No tool-specific frontmatter block (unlike cursor's YAML frontmatter / copilot's applyTo).
     expect(content.startsWith("---")).toBe(false);
 
-    const record = result.written[0];
+    const record = result.written.find((w) => w.relativePath === AGENTS_MD_RELATIVE_PATH);
     expect(record?.relativePath).toBe(AGENTS_MD_RELATIVE_PATH);
     expect(record?.relativePath).toBe("AGENTS.md");
     expect(record?.adapter).toBe("agent");
@@ -99,9 +123,10 @@ describe("renderAgentAdapter (spec §8.5, decisions.md D1/D19/D24)", () => {
     expect(content).toContain("KEEP-THIS-CONSUMER-LINE");
     expect(content).toContain("<!-- nockta:agents:start -->");
     expect(content).toMatch(/# Skill A body/);
-    expect(result.written[0]?.mergedIntoConsumerContent).toBe(true);
+    const agentsRecord = result.written.find((w) => w.relativePath === AGENTS_MD_RELATIVE_PATH);
+    expect(agentsRecord?.mergedIntoConsumerContent).toBe(true);
     // `content` field stays target-independent (canonical fresh region), not the merged bytes.
-    expect(result.written[0]?.content?.toString("utf8")).not.toContain("KEEP-THIS-CONSUMER-LINE");
+    expect(agentsRecord?.content?.toString("utf8")).not.toContain("KEEP-THIS-CONSUMER-LINE");
   });
 
   it("D34 addendum: fresh target sets mergedIntoConsumerContent false and wraps the whole payload in the guard region", () => {
@@ -113,7 +138,8 @@ describe("renderAgentAdapter (spec §8.5, decisions.md D1/D19/D24)", () => {
     const content = readFileSync(join(targetDir, "AGENTS.md"), "utf8");
     expect(content.startsWith("<!-- nockta:agents:start -->")).toBe(true);
     expect(content.trimEnd().endsWith("<!-- nockta:agents:end -->")).toBe(true);
-    expect(result.written[0]?.mergedIntoConsumerContent).toBe(false);
+    const agentsRecord = result.written.find((w) => w.relativePath === AGENTS_MD_RELATIVE_PATH);
+    expect(agentsRecord?.mergedIntoConsumerContent).toBe(false);
   });
 
   it("adapter-restriction: a claude-only skill is excluded from AGENTS.md, reported skipped", () => {
@@ -171,7 +197,7 @@ describe("renderAgentAdapter (spec §8.5, decisions.md D1/D19/D24)", () => {
     const content = readFileSync(join(targetDir, "AGENTS.md"), "utf8");
     expect(content).toMatch(/Hand-authored AGENTS\.md section\./);
     expect(content).not.toMatch(/Base content/);
-    expect(result.written[0]?.overridden).toBe(true);
+    expect(result.written.find((w) => w.relativePath === AGENTS_MD_RELATIVE_PATH)?.overridden).toBe(true);
   });
 
   it("zero rendering skills across every pack produces no file at all", () => {
@@ -196,5 +222,194 @@ describe("renderAgentAdapter (spec §8.5, decisions.md D1/D19/D24)", () => {
     expect(content).toMatch(/# Artifact skill prose/);
     // No agent-file kind ever produced by this adapter.
     expect(result.written.every((w) => w.kind !== "agent")).toBe(true);
+  });
+
+  it("inline-digest tier, digest sub-case: a whitelisted section is extracted verbatim into AGENTS.md's own body; non-whitelisted content is not", () => {
+    writeSkill(
+      "common",
+      "digest-skill",
+      "# Digest Skill\n\n## The idea\n\nWhitelisted idea text.\n\n## Not Whitelisted\n\nShould not appear inline.\n",
+    );
+    const packs = [makePackEntry(packsRoot, "common", ["digest-skill"])]; // default tier: "inline-digest"
+
+    renderAgentAdapter({ targetDir, packs, packsRoot, effectiveSkills: new Set(["digest-skill"]) });
+
+    const agentsMd = readFileSync(join(targetDir, "AGENTS.md"), "utf8");
+    expect(agentsMd).toContain("### digest-skill\n\n**digest-skill test description.**\n\n## The idea\n\nWhitelisted idea text.");
+    expect(agentsMd).not.toContain("Should not appear inline.");
+  });
+
+  it("inline-digest tier, fallback sub-case: a skill with no whitelisted heading ships its full body verbatim inline", () => {
+    const body = "# Fallback Skill\n\nJust a paragraph, no whitelisted heading at all.\n";
+    writeSkill("common", "fallback-skill", body);
+    const packs = [makePackEntry(packsRoot, "common", ["fallback-skill"])];
+
+    renderAgentAdapter({ targetDir, packs, packsRoot, effectiveSkills: new Set(["fallback-skill"]) });
+
+    const agentsMd = readFileSync(join(targetDir, "AGENTS.md"), "utf8");
+    expect(agentsMd).toContain(`### fallback-skill\n\n${body.trim()}\n`);
+  });
+
+  it("docs/agents/<inline-digest-pack>.md is unconditional and always full, for both digest-mode and fallback-mode skills", () => {
+    writeSkill("common", "digest-skill", "# D\n\n## The idea\n\nIdea text.\n\n## Not Whitelisted\n\nExtra body.\n");
+    writeSkill("common", "fallback-skill", "# F\n\nPlain body, no whitelisted heading.\n");
+    const packs = [makePackEntry(packsRoot, "common", ["digest-skill", "fallback-skill"])];
+
+    renderAgentAdapter({ targetDir, packs, packsRoot, effectiveSkills: new Set(["digest-skill", "fallback-skill"]) });
+
+    const companion = readFileSync(join(targetDir, "docs", "agents", "common.md"), "utf8");
+    expect(companion).toContain("Extra body."); // full body, not the digest excerpt
+    expect(companion).toContain("Plain body, no whitelisted heading.");
+    expect(companion.startsWith("## common display\n\ncommon description\n\n")).toBe(true);
+  });
+
+  it("companion tier: skill body never appears inline in AGENTS.md; a Skill guides bullet is produced instead", () => {
+    writeSkill("next", "next-skill", "# Next Skill\n\nBody text for next.\n");
+    const packs = [makePackEntry(packsRoot, "next", ["next-skill"], "companion")];
+
+    renderAgentAdapter({ targetDir, packs, packsRoot, effectiveSkills: new Set(["next-skill"]) });
+
+    const agentsMd = readFileSync(join(targetDir, "AGENTS.md"), "utf8");
+    expect(agentsMd).not.toContain("Body text for next.");
+    expect(agentsMd).toMatch(/## Skill guides/);
+    expect(agentsMd).toContain("- docs/agents/next.md —");
+  });
+
+  it("Skill guides bullet grammar — exact string match, both tiers", () => {
+    writeSkill("common", "c-skill", "# C\n\nBody.\n");
+    writeSkill("next", "n-skill", "# N\n\nBody.\n");
+    const packs = [
+      makePackEntry(packsRoot, "common", ["c-skill"]),
+      makePackEntry(packsRoot, "next", ["n-skill"], "companion", "Read before touching Next.js routing."),
+    ];
+
+    renderAgentAdapter({ targetDir, packs, packsRoot, effectiveSkills: new Set(["c-skill", "n-skill"]) });
+
+    const agentsMd = readFileSync(join(targetDir, "AGENTS.md"), "utf8");
+    expect(agentsMd).toContain(
+      "- docs/agents/common.md — common description. (c-skill). Read before working in this pack's domain.",
+    );
+    expect(agentsMd).toContain(
+      "- docs/agents/next.md — next description. (n-skill). Read before touching Next.js routing.",
+    );
+  });
+
+  it("companion files — every tier — full uniform shape + tracked RenderedFile entries", () => {
+    writeSkill("common", "c1", "# C1\n\nBody one.\n");
+    writeSkill("common", "c2", "# C2\n\nBody two.\n");
+    writeSkill("next", "n1", "# N1\n\nBody three.\n");
+    writeSkill("next", "n2", "# N2\n\nBody four.\n");
+    const packs = [
+      makePackEntry(packsRoot, "common", ["c1", "c2"]),
+      makePackEntry(packsRoot, "next", ["n1", "n2"], "companion"),
+    ];
+
+    const result = renderAgentAdapter({ targetDir, packs, packsRoot, effectiveSkills: new Set(["c1", "c2", "n1", "n2"]) });
+
+    const expectedCommon = "## common display\n\ncommon description\n\n### c1\n\n# C1\n\nBody one.\n\n### c2\n\n# C2\n\nBody two.\n";
+    const expectedNext = "## next display\n\nnext description\n\n### n1\n\n# N1\n\nBody three.\n\n### n2\n\n# N2\n\nBody four.\n";
+    expect(readFileSync(join(targetDir, "docs", "agents", "common.md"), "utf8")).toBe(expectedCommon);
+    expect(readFileSync(join(targetDir, "docs", "agents", "next.md"), "utf8")).toBe(expectedNext);
+
+    const commonEntry = result.written.find((w) => w.relativePath === "docs/agents/common.md");
+    const nextEntry = result.written.find((w) => w.relativePath === "docs/agents/next.md");
+    expect(commonEntry?.kind).toBe("instructions");
+    expect(commonEntry?.adapter).toBe("agent");
+    expect(commonEntry?.pack).toBe("common");
+    expect(nextEntry?.kind).toBe("instructions");
+    expect(nextEntry?.adapter).toBe("agent");
+    expect(nextEntry?.pack).toBe("next");
+  });
+
+  it("D1 override on an inline-digest pack wins wholesale for BOTH outputs — no whitelist extraction runs", () => {
+    writeSkill("common", "c-skill", "# C\n\n## The idea\n\nShould never appear — override wins wholesale.\n");
+    const packs = [makePackEntry(packsRoot, "common", ["c-skill"])];
+    const overridePath = join(packsRoot, "common", "adapters", "agent", "common.md");
+    writeFile(overridePath, "Hand-authored common section, verbatim.");
+
+    renderAgentAdapter({ targetDir, packs, packsRoot, effectiveSkills: new Set(["c-skill"]) });
+
+    const agentsMd = readFileSync(join(targetDir, "AGENTS.md"), "utf8");
+    const companion = readFileSync(join(targetDir, "docs", "agents", "common.md"), "utf8");
+    expect(agentsMd).toContain("Hand-authored common section, verbatim.");
+    expect(companion).toBe("Hand-authored common section, verbatim.\n");
+    expect(agentsMd).not.toContain("## The idea\n\nShould never appear");
+    expect(agentsMd).not.toContain("Should never appear — override wins wholesale.");
+  });
+
+  it("D1 override on a companion pack lands in its companion file only; the bullet's takeaway still lists the rendered skill names", () => {
+    writeSkill("next", "n-skill", "# N\n\nOriginal body.\n");
+    const packs = [makePackEntry(packsRoot, "next", ["n-skill"], "companion")];
+    const overridePath = join(packsRoot, "next", "adapters", "agent", "next.md");
+    writeFile(overridePath, "Hand-authored next section.");
+
+    renderAgentAdapter({ targetDir, packs, packsRoot, effectiveSkills: new Set(["n-skill"]) });
+
+    const agentsMd = readFileSync(join(targetDir, "AGENTS.md"), "utf8");
+    const companion = readFileSync(join(targetDir, "docs", "agents", "next.md"), "utf8");
+    expect(companion).toBe("Hand-authored next section.\n");
+    expect(agentsMd).not.toContain("Hand-authored next section.");
+    expect(agentsMd).not.toContain("Original body.");
+    expect(agentsMd).toContain("- docs/agents/next.md — next description. (n-skill).");
+  });
+
+  it("a zero-rendering-skill inline-digest pack (no override) produces no companion file, no bullet, no inline section", () => {
+    writeSkill("common", "claude-only", "# Claude Only", ["claude"]);
+    const packs = [makePackEntry(packsRoot, "common", ["claude-only"])];
+
+    const result = renderAgentAdapter({ targetDir, packs, packsRoot, effectiveSkills: new Set(["claude-only"]) });
+
+    expect(result.written).toEqual([]);
+    expect(existsSync(join(targetDir, "AGENTS.md"))).toBe(false);
+    expect(existsSync(join(targetDir, "docs", "agents", "common.md"))).toBe(false);
+  });
+
+  it("index-completeness invariant: every written docs/agents/*.md path appears exactly once as a Skill guides bullet, common included", () => {
+    writeSkill("common", "c-skill", "# C\n\nBody.\n");
+    writeSkill("pack-b", "b-skill", "# B\n\nBody.\n");
+    writeSkill("pack-c", "claude-only", "# Claude only", ["claude"]); // zero rendering skills
+    writeSkill("pack-d", "d-skill", "# D\n\nOriginal.\n");
+    const overridePath = join(packsRoot, "pack-d", "adapters", "agent", "pack-d.md");
+    writeFile(overridePath, "Overridden pack-d section.");
+
+    const packs = [
+      makePackEntry(packsRoot, "common", ["c-skill"]),
+      makePackEntry(packsRoot, "pack-b", ["b-skill"], "companion"),
+      makePackEntry(packsRoot, "pack-c", ["claude-only"], "companion"),
+      makePackEntry(packsRoot, "pack-d", ["d-skill"], "companion"),
+    ];
+
+    const result = renderAgentAdapter({
+      targetDir,
+      packs,
+      packsRoot,
+      effectiveSkills: new Set(["c-skill", "b-skill", "claude-only", "d-skill"]),
+    });
+
+    const agentsMd = readFileSync(join(targetDir, "AGENTS.md"), "utf8");
+    const skillGuidesSection = agentsMd.slice(agentsMd.indexOf("## Skill guides"));
+    const bulletPaths = [...skillGuidesSection.matchAll(/^- (docs\/agents\/[^\s]+\.md) —/gm)].map((m) => m[1]);
+
+    const writtenDocsPaths = result.written
+      .map((w) => w.relativePath)
+      .filter((p) => p.startsWith("docs/agents/"))
+      .sort();
+
+    expect(bulletPaths.sort()).toEqual(writtenDocsPaths);
+    expect(writtenDocsPaths).toEqual(["docs/agents/common.md", "docs/agents/pack-b.md", "docs/agents/pack-d.md"]);
+    // pack-c rendered nothing (claude-only skill, no agent output) — no file, no bullet.
+    expect(agentsMd).not.toContain("docs/agents/pack-c.md");
+  });
+
+  it("whitelist exactness: a near-miss heading ('## The idea behind this') is NOT extracted, falls back to full body", () => {
+    const body = "# Near Miss\n\n## The idea behind this\n\nShould stay inline in full, not be excerpted.\n";
+    writeSkill("common", "near-miss", body);
+    const packs = [makePackEntry(packsRoot, "common", ["near-miss"])];
+
+    renderAgentAdapter({ targetDir, packs, packsRoot, effectiveSkills: new Set(["near-miss"]) });
+
+    const agentsMd = readFileSync(join(targetDir, "AGENTS.md"), "utf8");
+    expect(agentsMd).toContain(`### near-miss\n\n${body.trim()}\n`);
+    expect(agentsMd).not.toContain("**near-miss test description.**");
   });
 });

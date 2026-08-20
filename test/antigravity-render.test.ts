@@ -16,7 +16,13 @@ function writeFile(path: string, content: string): void {
   writeFileSync(path, content, "utf8");
 }
 
-function makePackEntry(packsRoot: string, name: string, skills: string[]): ResolvedPackEntry {
+function makePackEntry(
+  packsRoot: string,
+  name: string,
+  skills: string[],
+  tier: "inline-digest" | "companion" = "companion",
+  agentTrigger = "Read before working in this pack's domain.",
+): ResolvedPackEntry {
   const path = join(packsRoot, name);
   return {
     name,
@@ -28,6 +34,8 @@ function makePackEntry(packsRoot: string, name: string, skills: string[]): Resol
       requires: [],
       skills,
       adapters: ["antigravity"],
+      tier,
+      agentTrigger,
     },
     installable: true,
     skills: skills.map((s) => ({ name: s, hasContent: true })),

@@ -5,6 +5,8 @@
   "requires": [
     "common"
   ],
+  "tier": "companion",
+  "agentTrigger": "Read before starting or reviewing any bare React Native (non-Expo) work.",
   "skills": [
     "swm-react-native-best-practices",
     "react-native-skills",

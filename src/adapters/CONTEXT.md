@@ -195,6 +195,10 @@ src/adapters/
   even if a skill.json sets `outputs.agent.agents: true`; only `outputs.agent.skills` (SKILL.md
   prose) is ever emitted. Same single-`RenderedFile`-covers-multiple-packs shape as copilot (see
   the bullet above) — `pack` is the sorted, comma-joined contributing-pack list, `skill` absent.
+  (D37, AGENTS.md guidemap): also now writes one `docs/agents/<pack>.md` companion file per
+  rendering pack (`common` included) and, for `common` specifically, inlines a
+  mechanically-extracted digest instead of the full body — see `agent/extract-digest.ts` and
+  `decisions.md` D37.
 - **No I/O beyond each adapter's own output location under `targetDir`.** Claude: `.claude/`.
   Cursor: `.cursor/rules/`. Copilot: `.github/instructions/`. Agent: the single root `AGENTS.md`
   file (D24 — the one adapter whose output isn't inside its own dotdir). Every renderer only ever

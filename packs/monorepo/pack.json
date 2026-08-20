@@ -5,6 +5,8 @@
   "requires": [
     "common"
   ],
+  "tier": "companion",
+  "agentTrigger": "Read before adding, wiring, or refactoring a package inside a Nockta-managed monorepo.",
   "skills": [
     "turborepo",
     "link-workspace-packages",

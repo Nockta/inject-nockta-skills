@@ -5,6 +5,8 @@
   "requires": [
     "common"
   ],
+  "tier": "companion",
+  "agentTrigger": "Read before starting or reviewing any Vite + React + TypeScript project work.",
   "skills": [
     "react-best-practices",
     "composition-patterns",

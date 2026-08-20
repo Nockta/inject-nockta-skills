@@ -6,6 +6,8 @@
   "requires": [
     "common"
   ],
+  "tier": "companion",
+  "agentTrigger": "Read before building or reviewing a headless Shopify storefront (Hydrogen, Remix, or the Storefront API).",
   "skills": [
     "shopify-storefront-graphql",
     "shopify-hydrogen",

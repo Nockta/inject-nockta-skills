@@ -3,6 +3,8 @@
   "displayName": "Common",
   "description": "Core Nockta AI workflow skills used across every project type.",
   "requires": [],
+  "tier": "inline-digest",
+  "agentTrigger": "Read when you need a skill's full step-by-step procedure — the inline digest above states doctrine only.",
   "skills": [
     "paper-trail",
     "proof-of-done",

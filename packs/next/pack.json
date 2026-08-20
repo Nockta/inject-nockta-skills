@@ -5,6 +5,8 @@
   "requires": [
     "common"
   ],
+  "tier": "companion",
+  "agentTrigger": "Read before starting or reviewing any Next.js App Router work.",
   "skills": [
     "react-best-practices",
     "nextjs-app-router-patterns",

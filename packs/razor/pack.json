@@ -5,6 +5,8 @@
   "author": "Razor",
   "license": "MIT",
   "requires": [],
+  "tier": "companion",
+  "agentTrigger": "Read before applying any of Razor's repo-type-gated engineering principles to an unfamiliar area.",
   "skills": [
     "abstractions-pay-rent",
     "admin-power-never-ships",

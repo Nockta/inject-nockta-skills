@@ -2,7 +2,8 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { isAdapterType } from "../types/adapter.js";
 import type { AdapterType } from "../types/adapter.js";
-import type { PackManifest } from "../types/pack.js";
+import { isPackTier } from "../types/pack.js";
+import type { PackManifest, PackTier } from "../types/pack.js";
 
 /**
  * Structured error for a `pack.json` that is missing, unreadable, not valid
@@ -71,6 +72,12 @@ function validatePackManifest(value: unknown, manifestPath: string): PackManifes
   if (!Array.isArray(obj.requires) || !obj.requires.every((r) => typeof r === "string")) {
     issues.push('"requires" must be an array of strings');
   }
+  if (!isPackTier(obj.tier)) {
+    issues.push('"tier" must be "inline-digest" or "companion"');
+  }
+  if (typeof obj.agentTrigger !== "string" || obj.agentTrigger.length === 0) {
+    issues.push('"agentTrigger" must be a non-empty string');
+  }
   if (
     !Array.isArray(obj.skills) ||
     obj.skills.length === 0 ||
@@ -95,6 +102,8 @@ function validatePackManifest(value: unknown, manifestPath: string): PackManifes
     displayName: obj.displayName as string,
     description: obj.description as string,
     requires: obj.requires as string[],
+    tier: obj.tier as PackTier,
+    agentTrigger: obj.agentTrigger as string,
     skills: obj.skills as string[],
     adapters: obj.adapters as AdapterType[],
   };
